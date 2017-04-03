@@ -11,9 +11,7 @@
 		0928E2611BA0785F0057232E /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F503032A1B8CFA2C0053E406 /* libsodium.a */; };
 		0928E36D1BA0908F0057232E /* Cryptobox.h in Headers */ = {isa = PBXBuildFile; fileRef = 0928E36C1BA0908F0057232E /* Cryptobox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09E393C31BAC2E5600F3EA1B /* Cryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* Cryptobox.framework */; };
-		54060B7B1DB7719000AEA9BB /* ZMCSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */; };
 		54060B7D1DB771B400AEA9BB /* Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54060B7C1DB771B400AEA9BB /* Logs.swift */; };
-		54060B7F1DB7761800AEA9BB /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5421C5F91D2C152C00048251 /* NSData+CBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5421C5F81D2C152C00048251 /* NSData+CBox.swift */; };
 		5442B4DB1E360195006B5282 /* cbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 5442B4DA1E360195006B5282 /* cbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5471A6591D24215B0092A9A9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6581D24215B0092A9A9 /* main.m */; };
@@ -33,6 +31,8 @@
 		54B949941D2541350041CC55 /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B949931D2541350041CC55 /* TestHelper.swift */; };
 		54C69DDA1D216A6B0060FBEC /* EncryptionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */; };
 		54EA12241D2A9AA400D2CFD1 /* CryptoBoxError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */; };
+		F10C8E241E9296BA00020408 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F10C8E231E9296BA00020408 /* WireSystem.framework */; };
+		F10C8E251E92977000020408 /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F10C8E231E9296BA00020408 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F503032B1B8CFA2C0053E406 /* libcryptobox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F50303291B8CFA2C0053E406 /* libcryptobox.a */; };
 		F503032C1B8CFA2C0053E406 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F503032A1B8CFA2C0053E406 /* libsodium.a */; };
 /* End PBXBuildFile section */
@@ -61,7 +61,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				54060B7F1DB7761800AEA9BB /* ZMCSystem.framework in CopyFiles */,
+				F10C8E251E92977000020408 /* WireSystem.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +124,7 @@
 		54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoBoxError.swift; sourceTree = "<group>"; };
 		BA7EF9691B7109B600204A8E /* CryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F10C8E231E9296BA00020408 /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
 		F50303291B8CFA2C0053E406 /* libcryptobox.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcryptobox.a; sourceTree = "<group>"; };
 		F503032A1B8CFA2C0053E406 /* libsodium.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsodium.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -133,7 +134,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54060B7B1DB7719000AEA9BB /* ZMCSystem.framework in Frameworks */,
+				F10C8E241E9296BA00020408 /* WireSystem.framework in Frameworks */,
 				0928E2601BA0785F0057232E /* libcryptobox.a in Frameworks */,
 				0928E2611BA0785F0057232E /* libsodium.a in Frameworks */,
 			);
@@ -241,6 +242,7 @@
 				5471A6561D24215B0092A9A9 /* test-host */,
 				BA7EF95F1B7109B600204A8E /* Products */,
 				54060B791DB7714A00AEA9BB /* Framework */,
+				F10C8E221E9296BA00020408 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -298,6 +300,14 @@
 				F50303281B8CFA2C0053E406 /* lib */,
 			);
 			name = Libraries;
+			sourceTree = "<group>";
+		};
+		F10C8E221E9296BA00020408 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F10C8E231E9296BA00020408 /* WireSystem.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		F50303281B8CFA2C0053E406 /* lib */ = {
