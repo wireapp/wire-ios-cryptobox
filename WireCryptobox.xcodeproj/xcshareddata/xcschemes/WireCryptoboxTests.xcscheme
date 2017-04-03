@@ -17,7 +17,7 @@
                BlueprintIdentifier = "BA4B31311B986D4A005A1068"
                BuildableName = "CryptoboxiOS Tests.xctest"
                BlueprintName = "CryptoboxiOS Tests"
-               ReferencedContainer = "container:Cryptobox.xcodeproj">
+               ReferencedContainer = "container:WireCryptobox.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BA7EF9681B7109B600204A8E"
-               BuildableName = "CryptoboxTests.xctest"
-               BlueprintName = "CryptoboxTests"
-               ReferencedContainer = "container:Cryptobox.xcodeproj">
+               BuildableName = "WireCryptoboxTests.xctest"
+               BlueprintName = "WireCryptoboxTests"
+               ReferencedContainer = "container:WireCryptobox.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -45,7 +45,7 @@
             BlueprintIdentifier = "BA4B31311B986D4A005A1068"
             BuildableName = "CryptoboxiOS Tests.xctest"
             BlueprintName = "CryptoboxiOS Tests"
-            ReferencedContainer = "container:Cryptobox.xcodeproj">
+            ReferencedContainer = "container:WireCryptobox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -67,7 +67,7 @@
             BlueprintIdentifier = "BA4B31311B986D4A005A1068"
             BuildableName = "CryptoboxiOS Tests.xctest"
             BlueprintName = "CryptoboxiOS Tests"
-            ReferencedContainer = "container:Cryptobox.xcodeproj">
+            ReferencedContainer = "container:WireCryptobox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -85,7 +85,7 @@
             BlueprintIdentifier = "BA4B31311B986D4A005A1068"
             BuildableName = "CryptoboxiOS Tests.xctest"
             BlueprintName = "CryptoboxiOS Tests"
-            ReferencedContainer = "container:Cryptobox.xcodeproj">
+            ReferencedContainer = "container:WireCryptobox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

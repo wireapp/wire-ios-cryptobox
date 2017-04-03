@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0928E2331BA0777A0057232E"
-               BuildableName = "Cryptobox.framework"
-               BlueprintName = "Cryptobox-ios"
-               ReferencedContainer = "container:Cryptobox.xcodeproj">
+               BuildableName = "WireCryptobox.framework"
+               BlueprintName = "WireCryptobox"
+               ReferencedContainer = "container:WireCryptobox.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BA7EF9681B7109B600204A8E"
-               BuildableName = "CryptoboxTests.xctest"
-               BlueprintName = "CryptoboxTests"
-               ReferencedContainer = "container:Cryptobox.xcodeproj">
+               BuildableName = "WireCryptoboxTests.xctest"
+               BlueprintName = "WireCryptoboxTests"
+               ReferencedContainer = "container:WireCryptobox.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,9 +43,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0928E2331BA0777A0057232E"
-            BuildableName = "Cryptobox.framework"
-            BlueprintName = "Cryptobox-ios"
-            ReferencedContainer = "container:Cryptobox.xcodeproj">
+            BuildableName = "WireCryptobox.framework"
+            BlueprintName = "WireCryptobox"
+            ReferencedContainer = "container:WireCryptobox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -65,9 +65,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0928E2331BA0777A0057232E"
-            BuildableName = "Cryptobox.framework"
-            BlueprintName = "Cryptobox-ios"
-            ReferencedContainer = "container:Cryptobox.xcodeproj">
+            BuildableName = "WireCryptobox.framework"
+            BlueprintName = "WireCryptobox"
+            ReferencedContainer = "container:WireCryptobox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -83,9 +83,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0928E2331BA0777A0057232E"
-            BuildableName = "Cryptobox.framework"
-            BlueprintName = "Cryptobox-ios"
-            ReferencedContainer = "container:Cryptobox.xcodeproj">
+            BuildableName = "WireCryptobox.framework"
+            BlueprintName = "WireCryptobox"
+            ReferencedContainer = "container:WireCryptobox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
