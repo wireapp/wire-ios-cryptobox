@@ -98,7 +98,6 @@
 		0928E3811BA17E300057232E /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		0928E3821BA17E300057232E /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		0928E3831BA17E300057232E /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
-		54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
 		54060B7C1DB771B400AEA9BB /* Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logs.swift; sourceTree = "<group>"; };
 		5421C5F81D2C152C00048251 /* NSData+CBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+CBox.swift"; sourceTree = "<group>"; };
 		5442B4DA1E360195006B5282 /* cbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cbox.h; sourceTree = "<group>"; };
@@ -200,14 +199,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		54060B791DB7714A00AEA9BB /* Framework */ = {
-			isa = PBXGroup;
-			children = (
-				54060B7A1DB7719000AEA9BB /* ZMCSystem.framework */,
-			);
-			name = Framework;
-			sourceTree = "<group>";
-		};
 		5471A6561D24215B0092A9A9 /* test-host */ = {
 			isa = PBXGroup;
 			children = (
@@ -241,7 +232,6 @@
 				BA7EF96D1B7109B600204A8E /* CryptoboxTests */,
 				5471A6561D24215B0092A9A9 /* test-host */,
 				BA7EF95F1B7109B600204A8E /* Products */,
-				54060B791DB7714A00AEA9BB /* Framework */,
 				F10C8E221E9296BA00020408 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -400,7 +390,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = Cryptobox;
 				TargetAttributes = {
 					0928E2331BA0777A0057232E = {
@@ -573,7 +563,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0928E3741BA17E300057232E /* Cryptobox-ios.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -597,7 +586,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0928E3741BA17E300057232E /* Cryptobox-ios.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
