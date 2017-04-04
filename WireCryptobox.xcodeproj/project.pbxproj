@@ -471,7 +471,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "DIRECTORY=\"${PROJECT_DIR}/../build\"\nexport PATH=$PATH:/usr/local/bin\nhash wget || exit 1 # if this fires, you don't have wget installed!\nmake cryptobox-\"${CRYPTOBOX_VERSION}\"\ncp build/include/cbox.h WireCryptobox/cbox.h";
+			shellScript = "DIRECTORY=\"${PROJECT_DIR}/../build\"\nexport PATH=$PATH:/usr/local/bin\nhash curl || exit 1 # if this fires, you don't have wget installed!\nmake cryptobox-\"${CRYPTOBOX_VERSION}\"\ncp build/include/cbox.h WireCryptobox/cbox.h";
 		};
 		5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */ = {
 			isa = PBXShellScriptBuildPhase;
