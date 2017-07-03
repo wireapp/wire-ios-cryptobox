@@ -113,8 +113,6 @@
 		54B949911D253E2E0041CC55 /* EncryptionSessionsDirectoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EncryptionSessionsDirectoryTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		54B949931D2541350041CC55 /* TestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
 		54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionContext.swift; sourceTree = "<group>"; };
-		54CBD5E31ED2EE3D002B7BA2 /* WireCryptobox-macOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireCryptobox-macOS.h"; sourceTree = "<group>"; };
-		54CBD5E41ED2EE3D002B7BA2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoBoxError.swift; sourceTree = "<group>"; };
 		BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -219,15 +217,6 @@
 			path = "zmc-config";
 			sourceTree = "<group>";
 		};
-		54CBD5E21ED2EE3D002B7BA2 /* WireCryptobox-macOS */ = {
-			isa = PBXGroup;
-			children = (
-				54CBD5E31ED2EE3D002B7BA2 /* WireCryptobox-macOS.h */,
-				54CBD5E41ED2EE3D002B7BA2 /* Info.plist */,
-			);
-			path = "WireCryptobox-macOS";
-			sourceTree = "<group>";
-		};
 		BA7EF9551B7109B600204A8E = {
 			isa = PBXGroup;
 			children = (
@@ -236,7 +225,6 @@
 				BA7EF9781B710B4D00204A8E /* Libraries */,
 				BA7EF96D1B7109B600204A8E /* CryptoboxTests */,
 				5471A6561D24215B0092A9A9 /* test-host */,
-				54CBD5E21ED2EE3D002B7BA2 /* WireCryptobox-macOS */,
 				BA7EF95F1B7109B600204A8E /* Products */,
 				F10C8E221E9296BA00020408 /* Frameworks */,
 			);
