@@ -17,9 +17,6 @@
 //
 
 
-#include "zmc-config/swift.xcconfig"
-#include "zmc-config/architectures.xcconfig"
-
 APPLICATION_EXTENSION_API_ONLY = YES
 PRODUCT_NAME = WireCryptobox
 LIBRARY_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/build/lib
