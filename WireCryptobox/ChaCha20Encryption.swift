@@ -26,6 +26,8 @@ public final class ChaCha20Encryption {
     public enum EncryptionError: Error {
         /// Couldn't read  corrupt message header
         case malformedHeader
+        /// Encryption failed
+        case encryptionFailed
         /// Decryption failed to incorrect key, malformed message
         case decryptionFailed
         /// Failure reading input stream
@@ -66,7 +68,9 @@ public final class ChaCha20Encryption {
         var header = Array<UInt8>(repeating: 0, count: Int(crypto_secretstream_xchacha20poly1305_HEADERBYTES))
         var state = crypto_secretstream_xchacha20poly1305_state()
         
-        crypto_secretstream_xchacha20poly1305_init_push(&state, &header, key.buffer);
+        guard crypto_secretstream_xchacha20poly1305_init_push(&state, &header, key.buffer) == 0 else {
+            throw EncryptionError.encryptionFailed
+        }
         
         var messageBuffer = Array<UInt8>(repeating: 0, count: bufferSize)
         let cipherBufferSize = bufferSize + Int(crypto_secretstream_xchacha20poly1305_ABYTES)
@@ -92,7 +96,9 @@ public final class ChaCha20Encryption {
             var cipherLength: UInt64 = 0
             let tag: UInt8 = input.hasBytesAvailable ? 0 : UInt8(crypto_secretstream_xchacha20poly1305_TAG_FINAL)
             
-            crypto_secretstream_xchacha20poly1305_push(&state, &cipherBuffer, &cipherLength, messageBuffer, messageLength, nil, 0, tag)
+            guard crypto_secretstream_xchacha20poly1305_push(&state, &cipherBuffer, &cipherLength, messageBuffer, messageLength, nil, 0, tag) == 0 else {
+                throw EncryptionError.encryptionFailed
+            }
             
             bytesWritten = output.write(cipherBuffer, maxLength: Int(cipherLength))
             totalBytesWritten += bytesWritten
