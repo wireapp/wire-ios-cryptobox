@@ -23,15 +23,17 @@ public final class ChaCha20Encryption {
     
     private static let bufferSize = 1024
     
-    public enum EncryptionError : Error {
+    public enum EncryptionError: Error {
         /// Couldn't read  corrupt message header
         case malformedHeader
         /// Decryption failed to incorrect key, malformed message
         case decryptionFailed
         /// Failure reading input stream
-        case readError(Error?)
+        case readError(Error)
         /// Failure writing to output stream
-        case writeError(Error?)
+        case writeError(Error)
+        /// Stream end was reached while expecting more data
+        case unexpectedStreamEnd
     }
     
     /// ChaCha20 Key
@@ -78,7 +80,7 @@ public final class ChaCha20Encryption {
         totalBytesWritten += bytesWritten
         
         guard bytesWritten > 0 else {
-            throw EncryptionError.writeError(output.streamError)
+            throw EncryptionError.writeError(output.streamError ?? EncryptionError.unexpectedStreamEnd)
         }
         
         repeat {
@@ -97,11 +99,11 @@ public final class ChaCha20Encryption {
         } while bytesRead > 0 && bytesWritten > 0
         
         if bytesRead < 0 {
-            throw EncryptionError.readError(input.streamError)
+            throw EncryptionError.readError(input.streamError!)
         }
         
         if bytesWritten < 0 {
-            throw EncryptionError.writeError(output.streamError)
+            throw EncryptionError.writeError(output.streamError!)
         }
         
         return totalBytesWritten
@@ -131,7 +133,7 @@ public final class ChaCha20Encryption {
         var header = Array<UInt8>(repeating: 0, count: Int(crypto_secretstream_xchacha20poly1305_HEADERBYTES))
         
         guard input.read(&header, maxLength: Int(crypto_secretstream_xchacha20poly1305_HEADERBYTES)) > 0  else {
-            throw EncryptionError.readError(input.streamError)
+            throw EncryptionError.readError(input.streamError ?? EncryptionError.unexpectedStreamEnd)
         }
 
         guard crypto_secretstream_xchacha20poly1305_init_pull(&state, header, key.buffer) == 0 else {
@@ -164,11 +166,11 @@ public final class ChaCha20Encryption {
         }
         
         if bytesRead < 0 {
-            throw EncryptionError.readError(input.streamError)
+            throw EncryptionError.readError(input.streamError!)
         }
         
         if bytesWritten < 0 {
-            throw EncryptionError.writeError(output.streamError)
+            throw EncryptionError.writeError(output.streamError!)
         }
         
         return totalBytesWritten
