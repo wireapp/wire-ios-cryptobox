@@ -12,6 +12,8 @@
 		0928E36D1BA0908F0057232E /* WireCryptobox.h in Headers */ = {isa = PBXBuildFile; fileRef = 0928E36C1BA0908F0057232E /* WireCryptobox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09E393C31BAC2E5600F3EA1B /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* WireCryptobox.framework */; };
 		16460B7F206D456F0096B616 /* cbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 16460B7E206D456F0096B616 /* cbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		16460B81206D46CA0096B616 /* ChaCha20Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16460B80206D46CA0096B616 /* ChaCha20Encryption.swift */; };
+		16460B83206D47460096B616 /* ChaCha20EncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16460B82206D47460096B616 /* ChaCha20EncryptionTests.swift */; };
 		54060B7D1DB771B400AEA9BB /* Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54060B7C1DB771B400AEA9BB /* Logs.swift */; };
 		5421C5F91D2C152C00048251 /* NSData+CBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5421C5F81D2C152C00048251 /* NSData+CBox.swift */; };
 		5471A6591D24215B0092A9A9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6581D24215B0092A9A9 /* main.m */; };
@@ -86,6 +88,8 @@
 		16460B7A206D41430096B616 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		16460B7B206D42910096B616 /* WireCryptobox.private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = WireCryptobox.private.modulemap; sourceTree = "<group>"; };
 		16460B7E206D456F0096B616 /* cbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cbox.h; sourceTree = "<group>"; };
+		16460B80206D46CA0096B616 /* ChaCha20Encryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20Encryption.swift; sourceTree = "<group>"; };
+		16460B82206D47460096B616 /* ChaCha20EncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20EncryptionTests.swift; sourceTree = "<group>"; };
 		54060B7C1DB771B400AEA9BB /* Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logs.swift; sourceTree = "<group>"; };
 		5421C5F81D2C152C00048251 /* NSData+CBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+CBox.swift"; sourceTree = "<group>"; };
 		5471A6551D24215B0092A9A9 /* test-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "test-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -265,6 +269,7 @@
 				5471A6731D242D740092A9A9 /* PointerWrapper.swift */,
 				54060B7C1DB771B400AEA9BB /* Logs.swift */,
 				54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */,
+				16460B80206D46CA0096B616 /* ChaCha20Encryption.swift */,
 				16460B7B206D42910096B616 /* WireCryptobox.private.modulemap */,
 				0928E36F1BA090A00057232E /* Supporting Files */,
 			);
@@ -276,6 +281,7 @@
 			children = (
 				BA7EF96E1B7109B600204A8E /* Supporting Files */,
 				54A1573E1D23C00500EB3B4F /* EncryptionContextTests.swift */,
+				16460B82206D47460096B616 /* ChaCha20EncryptionTests.swift */,
 				54B224821DBE92E200FDB35E /* EncryptionDebugTests.swift */,
 				54B949911D253E2E0041CC55 /* EncryptionSessionsDirectoryTests.swift */,
 				54B949931D2541350041CC55 /* TestHelper.swift */,
@@ -502,6 +508,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16460B81206D46CA0096B616 /* ChaCha20Encryption.swift in Sources */,
 				5421C5F91D2C152C00048251 /* NSData+CBox.swift in Sources */,
 				54EA12241D2A9AA400D2CFD1 /* CryptoBoxError.swift in Sources */,
 				5471A6741D242D740092A9A9 /* PointerWrapper.swift in Sources */,
@@ -529,6 +536,7 @@
 				54B949921D253E2E0041CC55 /* EncryptionSessionsDirectoryTests.swift in Sources */,
 				54A1573F1D23C00500EB3B4F /* EncryptionContextTests.swift in Sources */,
 				54B949941D2541350041CC55 /* TestHelper.swift in Sources */,
+				16460B83206D47460096B616 /* ChaCha20EncryptionTests.swift in Sources */,
 				54B224831DBE92E200FDB35E /* EncryptionDebugTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
