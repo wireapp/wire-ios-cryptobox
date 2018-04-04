@@ -40,11 +40,34 @@ public final class ChaCha20Encryption {
     
     /// ChaCha20 Key
     public struct Key {
-        let buffer: Array<UInt8>
+        fileprivate static let salt = "WVBPkDGfcijYPCcduAnkxBdBuMNbRQkB"
+        fileprivate let buffer: Array<UInt8>
         
+        /// Generate a key
         public init() {
             var buffer = Array<UInt8>(repeating: 0, count: Int(crypto_secretstream_xchacha20poly1305_KEYBYTES))
             crypto_secretstream_xchacha20poly1305_keygen(&buffer)
+            self.buffer = buffer
+        }
+        
+        /// Generate a key from a passphrase.
+        /// - passphrase: string which is used to derive the key
+        ///
+        /// NOTE: this can fail if the system runs out of memory.
+        public init?(passphrase: String) {
+            var buffer = Array<UInt8>(repeating: 0, count: Int(crypto_secretstream_xchacha20poly1305_KEYBYTES))
+            
+            guard crypto_pwhash(&buffer,
+                                UInt64(crypto_secretstream_xchacha20poly1305_KEYBYTES),
+                                passphrase,
+                                UInt64(passphrase.lengthOfBytes(using: .utf8)),
+                                Key.salt,
+                                UInt64(crypto_pwhash_OPSLIMIT_MODERATE),
+                                Int(crypto_pwhash_MEMLIMIT_MODERATE),
+                                crypto_pwhash_ALG_DEFAULT) == 0 else {
+                                    return nil
+            }
+            
             self.buffer = buffer
         }
     }

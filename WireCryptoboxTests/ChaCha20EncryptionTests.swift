@@ -57,6 +57,21 @@ class ChaCha20EncryptionTests: XCTestCase {
         XCTAssertEqual(decryptedMessage, messageData)
     }
     
+    func testThatEncryptionAndDecryptionWorksWithPassphrase() throws {
+        
+        // given
+        let passphrase = "helloworld"
+        let message = "123456789"
+        let messageData =  message.data(using: .utf8)!
+        
+        // when
+        let encryptedMessage = try encrypt(messageData, key: ChaCha20Encryption.Key(passphrase: passphrase)!)
+        let decryptedMessage = try decrypt(encryptedMessage, key: ChaCha20Encryption.Key(passphrase: passphrase)!)
+        
+        // then
+        XCTAssertEqual(decryptedMessage, messageData)
+    }
+    
     func testThatItThrowsWriteErrorWhenOutputStreamFailsWhileEncrypting() throws {
         
         // given
