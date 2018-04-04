@@ -21,7 +21,7 @@ import Sodium
 
 public final class ChaCha20Encryption {
     
-    private static let bufferSize = 1024
+    private static let bufferSize = 1024 * 1024
     
     public enum EncryptionError: Error {
         /// Couldn't read  corrupt message header
@@ -165,6 +165,10 @@ public final class ChaCha20Encryption {
             
             bytesWritten = output.write(messageBuffer, maxLength: Int(messageLength))
             totalBytesWritten += bytesWritten
+            
+            if tag == crypto_secretstream_xchacha20poly1305_TAG_FINAL {
+                break // avoid reading data after final message is decrypted
+            }
         } while bytesRead > 0 && bytesWritten > 0
         
         guard tag == crypto_secretstream_xchacha20poly1305_TAG_FINAL else {
