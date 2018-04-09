@@ -98,7 +98,6 @@
 		87AE8D48207BB3380058715E /* crypto_box_curve25519xsalsa20poly1305.h in Headers */ = {isa = PBXBuildFile; fileRef = 87AE8D07207BB3370058715E /* crypto_box_curve25519xsalsa20poly1305.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		87AE8D49207BB3380058715E /* crypto_generichash_blake2b.h in Headers */ = {isa = PBXBuildFile; fileRef = 87AE8D08207BB3370058715E /* crypto_generichash_blake2b.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		87AE8D4A207BB3380058715E /* crypto_sign_edwards25519sha512batch.h in Headers */ = {isa = PBXBuildFile; fileRef = 87AE8D09207BB3370058715E /* crypto_sign_edwards25519sha512batch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		87AE8D4C207BB3700058715E /* sodium.h in Headers */ = {isa = PBXBuildFile; fileRef = 87AE8D4B207BB3700058715E /* sodium.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F10C8E241E9296BA00020408 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F10C8E231E9296BA00020408 /* WireSystem.framework */; };
 		F10C8E251E92977000020408 /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F10C8E231E9296BA00020408 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F503032B1B8CFA2C0053E406 /* libcryptobox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F50303291B8CFA2C0053E406 /* libcryptobox.a */; };
@@ -250,7 +249,6 @@
 		87AE8D07207BB3370058715E /* crypto_box_curve25519xsalsa20poly1305.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_box_curve25519xsalsa20poly1305.h; sourceTree = "<group>"; };
 		87AE8D08207BB3370058715E /* crypto_generichash_blake2b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_generichash_blake2b.h; sourceTree = "<group>"; };
 		87AE8D09207BB3370058715E /* crypto_sign_edwards25519sha512batch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_sign_edwards25519sha512batch.h; sourceTree = "<group>"; };
-		87AE8D4B207BB3700058715E /* sodium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sodium.h; sourceTree = "<group>"; };
 		BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F10C8E231E9296BA00020408 /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
@@ -455,7 +453,6 @@
 			isa = PBXGroup;
 			children = (
 				0928E36C1BA0908F0057232E /* WireCryptobox.h */,
-				87AE8D4B207BB3700058715E /* sodium.h */,
 				87AE8CC8207BB3370058715E /* sodium */,
 				16460B7E206D456F0096B616 /* cbox.h */,
 				54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */,
@@ -534,7 +531,6 @@
 				87AE8D3C207BB3380058715E /* crypto_secretstream_xchacha20poly1305.h in Headers */,
 				87AE8D4A207BB3380058715E /* crypto_sign_edwards25519sha512batch.h in Headers */,
 				87AE8D20207BB3380058715E /* crypto_hash.h in Headers */,
-				87AE8D4C207BB3700058715E /* sodium.h in Headers */,
 				87AE8D1C207BB3380058715E /* crypto_aead_xchacha20poly1305.h in Headers */,
 				87AE8D3B207BB3380058715E /* crypto_pwhash_argon2id.h in Headers */,
 				16460B7F206D456F0096B616 /* cbox.h in Headers */,
