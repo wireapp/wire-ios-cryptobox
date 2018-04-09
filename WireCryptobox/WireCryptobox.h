@@ -84,12 +84,6 @@ FOUNDATION_EXPORT const unsigned char WireCryptobox_VersionString[];
 #import <WireCryptobox/crypto_stream_salsa208.h>
 #import <WireCryptobox/crypto_stream_xchacha20.h>
 
-#import <WireCryptobox/crypto_uint32.h>
-#import <WireCryptobox/crypto_int32.h>
-#import <WireCryptobox/crypto_uint8.h>
-#import <WireCryptobox/crypto_int64.h>
-#import <WireCryptobox/crypto_uint64.h>
-#import <WireCryptobox/crypto_uint16.h>
 #import <WireCryptobox/crypto_sign_edwards25519sha512batch.h>
 
 #import <WireCryptobox/cbox.h>
