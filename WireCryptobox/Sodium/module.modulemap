@@ -1,4 +1,0 @@
-module Sodium {
-    header "../../build/include/sodium.h"
-    export *
-}

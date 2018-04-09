@@ -17,7 +17,6 @@
 //
 
 import Foundation
-@_exported import Sodium
 
 public final class ChaCha20Encryption {
     

@@ -1,3 +1,0 @@
-module WireCryptobox.Sodium {
-    export *
-}

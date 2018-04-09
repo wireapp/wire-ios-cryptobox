@@ -25,7 +25,6 @@ FOUNDATION_EXPORT double WireCryptobox_VersionNumber;
 //! Project version string for WireCryptobox.
 FOUNDATION_EXPORT const unsigned char WireCryptobox_VersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <Cryptobox/PublicHeader.h>
-
+#import <WireCryptobox/sodium.h>
 #import <WireCryptobox/cbox.h>
 
