@@ -149,7 +149,7 @@
 		16460B82206D47460096B616 /* ChaCha20EncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20EncryptionTests.swift; sourceTree = "<group>"; };
 		54060B7C1DB771B400AEA9BB /* Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logs.swift; sourceTree = "<group>"; };
 		5421C5F81D2C152C00048251 /* NSData+CBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+CBox.swift"; sourceTree = "<group>"; };
-		5471A6551D24215B0092A9A9 /* test-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "test-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5471A6551D24215B0092A9A9 /* WireCryptoboxTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireCryptoboxTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5471A6581D24215B0092A9A9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5471A65A1D24215B0092A9A9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		5471A65B1D24215B0092A9A9 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -430,7 +430,7 @@
 			children = (
 				BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */,
 				0928E2341BA0777A0057232E /* WireCryptobox.framework */,
-				5471A6551D24215B0092A9A9 /* test-host.app */,
+				5471A6551D24215B0092A9A9 /* WireCryptoboxTestHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -597,9 +597,9 @@
 			productReference = 0928E2341BA0777A0057232E /* WireCryptobox.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		5471A6541D24215B0092A9A9 /* test-host */ = {
+		5471A6541D24215B0092A9A9 /* WireCryptoboxTestHost */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5471A6691D24215B0092A9A9 /* Build configuration list for PBXNativeTarget "test-host" */;
+			buildConfigurationList = 5471A6691D24215B0092A9A9 /* Build configuration list for PBXNativeTarget "WireCryptoboxTestHost" */;
 			buildPhases = (
 				5471A6511D24215B0092A9A9 /* Sources */,
 				5471A6521D24215B0092A9A9 /* Frameworks */,
@@ -612,9 +612,9 @@
 			dependencies = (
 				5471A6711D24221A0092A9A9 /* PBXTargetDependency */,
 			);
-			name = "test-host";
+			name = WireCryptoboxTestHost;
 			productName = "test-host";
-			productReference = 5471A6551D24215B0092A9A9 /* test-host.app */;
+			productReference = 5471A6551D24215B0092A9A9 /* WireCryptoboxTestHost.app */;
 			productType = "com.apple.product-type.application";
 		};
 		BA7EF9681B7109B600204A8E /* WireCryptoboxTests */ = {
@@ -677,7 +677,7 @@
 			targets = (
 				0928E2331BA0777A0057232E /* WireCryptobox */,
 				BA7EF9681B7109B600204A8E /* WireCryptoboxTests */,
-				5471A6541D24215B0092A9A9 /* test-host */,
+				5471A6541D24215B0092A9A9 /* WireCryptoboxTestHost */,
 			);
 		};
 /* End PBXProject section */
@@ -783,7 +783,7 @@
 /* Begin PBXTargetDependency section */
 		5471A66D1D24216D0092A9A9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5471A6541D24215B0092A9A9 /* test-host */;
+			target = 5471A6541D24215B0092A9A9 /* WireCryptoboxTestHost */;
 			targetProxy = 5471A66C1D24216D0092A9A9 /* PBXContainerItemProxy */;
 		};
 		5471A6711D24221A0092A9A9 /* PBXTargetDependency */ = {
@@ -873,7 +873,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.cryptobox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PRODUCT_NAME)/CryptoboxTests-Bridging-Header.h";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/test-host.app/test-host";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireCryptoboxTestHost.app/WireCryptoboxTestHost";
 			};
 			name = Debug;
 		};
@@ -885,7 +885,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.cryptobox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PRODUCT_NAME)/CryptoboxTests-Bridging-Header.h";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/test-host.app/test-host";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireCryptoboxTestHost.app/WireCryptoboxTestHost";
 			};
 			name = Release;
 		};
@@ -901,7 +901,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5471A6691D24215B0092A9A9 /* Build configuration list for PBXNativeTarget "test-host" */ = {
+		5471A6691D24215B0092A9A9 /* Build configuration list for PBXNativeTarget "WireCryptoboxTestHost" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5471A66A1D24215B0092A9A9 /* Debug */,
