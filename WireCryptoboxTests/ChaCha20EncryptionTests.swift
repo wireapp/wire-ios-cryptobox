@@ -21,6 +21,30 @@ import WireCryptobox
 
 class ChaCha20EncryptionTests: XCTestCase {
     
+    var directoryURL: URL!
+    
+    override func setUp() {
+        super.setUp()
+        let docments = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        directoryURL = docments.appendingPathComponent("ChaCha20EncryptionTests")
+        
+        do {
+            try FileManager.default.createDirectory(atPath: directoryURL.path, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            XCTFail("Unable to create directory: \(error)")
+        }
+    }
+    
+    override func tearDown() {
+        try? FileManager.default.removeItem(at: directoryURL)
+        directoryURL = nil
+        super.tearDown()
+    }
+    
+    private func createTemporaryURL() -> URL {
+        return directoryURL.appendingPathComponent(UUID().uuidString)
+    }
+    
     func encrypt(_ message: Data, key: ChaCha20Encryption.Key) throws -> Data {
         let inputStream = InputStream(data: message)
         var outputBuffer = Array<UInt8>(repeating: 0, count: 256)
@@ -38,6 +62,25 @@ class ChaCha20EncryptionTests: XCTestCase {
         let decryptedBytes = try ChaCha20Encryption.decrypt(input: inputStream, output: outputStream, key: key)
         
         return Data(bytes: outputBuffer.prefix(decryptedBytes))
+    }
+    
+    func encryptToURL(_ message: Data, key: ChaCha20Encryption.Key) throws -> URL {
+        let inputURL = createTemporaryURL()
+        let outputURL = createTemporaryURL()
+        try message.write(to: inputURL)
+        let inputStream = InputStream(url: inputURL)!
+        let outputStream = OutputStream(url: outputURL, append: false)!
+        try ChaCha20Encryption.encrypt(input: inputStream, output: outputStream, key: key)
+        return outputURL
+    }
+    
+    func decryptFromURL(_ url: URL, key: ChaCha20Encryption.Key, file: StaticString = #file, line: UInt = #line) throws -> Data {
+        let outputURL = createTemporaryURL()
+        let outputStream = OutputStream(url: outputURL, append: false)!
+        let inputStream = InputStream(url: url)!
+        let decryptedBytes = try ChaCha20Encryption.decrypt(input: inputStream, output: outputStream, key: key)
+        XCTAssertGreaterThan(decryptedBytes, 0, file: file, line: line)
+        return try Data(contentsOf: outputURL)
     }
     
     // MARK: - Encryption
@@ -67,6 +110,36 @@ class ChaCha20EncryptionTests: XCTestCase {
         // when
         let encryptedMessage = try encrypt(messageData, key: ChaCha20Encryption.Key(passphrase: passphrase)!)
         let decryptedMessage = try decrypt(encryptedMessage, key: ChaCha20Encryption.Key(passphrase: passphrase)!)
+        
+        // then
+        XCTAssertEqual(decryptedMessage, messageData)
+    }
+    
+    func testThatEncryptionAndDecryptionWorks_ToDisk() throws {
+        
+        // given
+        let key = ChaCha20Encryption.Key()
+        let message = "123456789"
+        let messageData =  message.data(using: .utf8)!
+        
+        // when
+        let encryptedDataURL = try encryptToURL(messageData, key: key)
+        let decryptedMessage = try decryptFromURL(encryptedDataURL, key: key)
+        
+        // then
+        XCTAssertEqual(decryptedMessage, messageData)
+    }
+    
+    func testThatEncryptionAndDecryptionWorksWithPassphrase_ToDisk() throws {
+        
+        // given
+        let passphrase = "helloworld"
+        let message = "123456789"
+        let messageData =  message.data(using: .utf8)!
+        
+        // when
+        let encryptedDataURL = try encryptToURL(messageData, key: ChaCha20Encryption.Key(passphrase: passphrase)!)
+        let decryptedMessage = try decryptFromURL(encryptedDataURL, key: ChaCha20Encryption.Key(passphrase: passphrase)!)
         
         // then
         XCTAssertEqual(decryptedMessage, messageData)
