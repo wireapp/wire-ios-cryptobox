@@ -35,6 +35,8 @@ public final class ChaCha20Encryption {
         case writeError(Error)
         /// Stream end was reached while expecting more data
         case unexpectedStreamEnd
+        /// Unknown error
+        case unknown
     }
     
     /// ChaCha20 Key
@@ -95,12 +97,15 @@ public final class ChaCha20Encryption {
         }
         
         var messageBuffer = Array<UInt8>(repeating: 0, count: bufferSize)
+        var messageBufferReadAhead = Array<UInt8>(repeating: 0, count: bufferSize)
+        
         let cipherBufferSize = bufferSize + Int(crypto_secretstream_xchacha20poly1305_ABYTES)
         var cipherBuffer = Array<UInt8>(repeating: 0, count: cipherBufferSize)
         
         var totalBytesWritten = 0
         var bytesWritten = -1
         var bytesRead = -1
+        var bytesReadReadAhead = -1
         
         bytesWritten = output.write(header, maxLength: Int(crypto_secretstream_xchacha20poly1305_HEADERBYTES))
         totalBytesWritten += bytesWritten
@@ -110,28 +115,41 @@ public final class ChaCha20Encryption {
         }
         
         repeat {
-            bytesRead = input.read(&messageBuffer, maxLength: bufferSize)
+            if bytesRead < 0 {
+                bytesRead = input.read(&messageBuffer, maxLength: bufferSize)
+                if let error = input.streamError {
+                    throw EncryptionError.readError(error)
+                }
+            } else {
+                (bytesRead, messageBuffer) = (bytesReadReadAhead, messageBufferReadAhead)
+            }
+            
+            bytesReadReadAhead = input.read(&messageBufferReadAhead, maxLength: bufferSize)
             
             guard bytesRead > 0 else { break }
             
             let messageLength: UInt64 = UInt64(bytesRead)
             var cipherLength: UInt64 = 0
             let tag: UInt8 = input.hasBytesAvailable ? 0 : UInt8(crypto_secretstream_xchacha20poly1305_TAG_FINAL)
-            
+
             guard crypto_secretstream_xchacha20poly1305_push(&state, &cipherBuffer, &cipherLength, messageBuffer, messageLength, nil, 0, tag) == 0 else {
                 throw EncryptionError.encryptionFailed
             }
             
             bytesWritten = output.write(cipherBuffer, maxLength: Int(cipherLength))
+            if let error = output.streamError {
+                throw EncryptionError.writeError(error)
+            }
+            
             totalBytesWritten += bytesWritten
         } while bytesRead > 0 && bytesWritten > 0
         
         if bytesRead < 0 {
-            throw EncryptionError.readError(input.streamError!)
+            throw EncryptionError.readError(input.streamError ?? EncryptionError.unknown)
         }
         
         if bytesWritten < 0 {
-            throw EncryptionError.writeError(output.streamError!)
+            throw EncryptionError.writeError(output.streamError ?? EncryptionError.unknown)
         }
         
         return totalBytesWritten
@@ -186,6 +204,10 @@ public final class ChaCha20Encryption {
             }
             
             bytesWritten = output.write(messageBuffer, maxLength: Int(messageLength))
+            if let error = output.streamError {
+                throw EncryptionError.writeError(error)
+            }
+
             totalBytesWritten += bytesWritten
             
             if tag == crypto_secretstream_xchacha20poly1305_TAG_FINAL {
@@ -198,11 +220,11 @@ public final class ChaCha20Encryption {
         }
         
         if bytesRead < 0 {
-            throw EncryptionError.readError(input.streamError!)
+            throw EncryptionError.readError(input.streamError ?? EncryptionError.unknown)
         }
         
         if bytesWritten < 0 {
-            throw EncryptionError.writeError(output.streamError!)
+            throw EncryptionError.writeError(output.streamError ?? EncryptionError.unknown)
         }
         
         return totalBytesWritten
