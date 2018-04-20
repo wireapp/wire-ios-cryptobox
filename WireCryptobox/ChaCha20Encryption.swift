@@ -21,8 +21,6 @@ import Foundation
 public final class ChaCha20Encryption {
     
     private static let bufferSize = 1024 * 1024
-    private static let keyGenerationIterations: UInt64 = 6
-    private static let keyGenerationMemoryLimit: Int = 134217728
     
     public enum EncryptionError: Error {
         /// Couldn't read corrupt message header
@@ -147,7 +145,7 @@ public final class ChaCha20Encryption {
         fileprivate static func hash(uuid: UUID, salt: Array<UInt8>) throws -> Array<UInt8> {
             var uuidAsBytes = Array<UInt8>(repeating: 0, count: 128)
             (uuid as NSUUID).getBytes(&uuidAsBytes)
-                        
+            
             let hashSize = 32
             var hash = Array<UInt8>(repeating: 0, count: hashSize)
             guard crypto_pwhash_argon2i(&hash,
@@ -155,8 +153,8 @@ public final class ChaCha20Encryption {
                                         uuidAsBytes.map(Int8.init),
                                         UInt64(uuidAsBytes.count),
                                         salt,
-                                        keyGenerationIterations,
-                                        keyGenerationMemoryLimit,
+                                        1,
+                                        Int(crypto_pwhash_MEMLIMIT_INTERACTIVE),
                                         crypto_pwhash_argon2i_ALG_ARGON2I13) == 0 else {
                 throw EncryptionError.keyGenerationFailed
             }
@@ -193,8 +191,8 @@ public final class ChaCha20Encryption {
                                         UInt64(crypto_secretstream_xchacha20poly1305_KEYBYTES),
                                         password, UInt64(password.lengthOfBytes(using: .utf8)),
                                         salt,
-                                        keyGenerationIterations,
-                                        keyGenerationMemoryLimit,
+                                        UInt64(crypto_pwhash_OPSLIMIT_MODERATE),
+                                        Int(crypto_pwhash_MEMLIMIT_MODERATE),
                                         crypto_pwhash_argon2i_ALG_ARGON2I13) == 0 else {
                 throw EncryptionError.keyGenerationFailed
             }
