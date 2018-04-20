@@ -118,7 +118,7 @@ public final class ChaCha20Encryption {
             var buffer = Array<UInt8>()
             var version = Header.version.bigEndian
             var salt = Array<UInt8>(repeating: 0, count: Int(crypto_pwhash_argon2i_SALTBYTES))
-            randombytes(&salt, UInt64(crypto_pwhash_argon2i_SALTBYTES))
+            randombytes_buf(&salt, Int(UInt64(crypto_pwhash_argon2i_SALTBYTES)))
             let uuidHash = try Header.hash(uuid: uuid, salt: salt)
             
             buffer.append(contentsOf: [UInt8](Header.platform))
