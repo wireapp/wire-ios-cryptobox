@@ -158,6 +158,20 @@ class ChaCha20EncryptionTests: XCTestCase {
         // then
         XCTAssertEqual(decryptedMessage, messageData)
     }
+    
+    func testThatDecryptionWorks() throws {
+        
+        // given
+        let expectedMessage = "123456789"
+        let passphrase = ChaCha20Encryption.Passphrase(password: "1235678", uuid: UUID(uuidString: "71DE4781-9EC7-4ED4-BADE-690C5A9732C6")!)
+        let encryptedMessage =  Data(base64Encoded: "V0JVSQAAAT5xxW76YX91IgLvJwXeC5x+q/8To15mBzbsA6rc5Dzf7xRyWH+LYv+bscKxj3c7Fl7trr/9qt78lgA5ZtyjK7d2ZBdSYl4HLskPjyUIseTjAZjGKt+7MEXp8aVBey8ooGep")!
+        
+        // when
+        let decryptedMessage = try decrypt(encryptedMessage, passphrase: passphrase)
+        
+        // then
+        XCTAssertEqual(decryptedMessage, expectedMessage.data(using: .utf8)!)
+    }
         
     func testThatEncryptionAndDecryptionWorks_ToDisk() throws {
         
