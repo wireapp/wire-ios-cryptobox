@@ -153,8 +153,8 @@ public final class ChaCha20Encryption {
                                         uuidAsBytes.map(Int8.init),
                                         UInt64(uuidAsBytes.count),
                                         salt,
-                                        UInt64(crypto_pwhash_OPSLIMIT_INTERACTIVE),
-                                        Int(crypto_pwhash_MEMLIMIT_INTERACTIVE),
+                                        UInt64(crypto_pwhash_argon2i_OPSLIMIT_INTERACTIVE),
+                                        Int(crypto_pwhash_argon2i_MEMLIMIT_INTERACTIVE),
                                         crypto_pwhash_argon2i_ALG_ARGON2I13) == 0 else {
                 throw EncryptionError.keyGenerationFailed
             }
@@ -191,8 +191,8 @@ public final class ChaCha20Encryption {
                                         UInt64(crypto_secretstream_xchacha20poly1305_KEYBYTES),
                                         password, UInt64(password.lengthOfBytes(using: .utf8)),
                                         salt,
-                                        UInt64(crypto_pwhash_OPSLIMIT_MODERATE),
-                                        Int(crypto_pwhash_MEMLIMIT_MODERATE),
+                                        UInt64(crypto_pwhash_argon2i_OPSLIMIT_MODERATE),
+                                        Int(crypto_pwhash_argon2i_MEMLIMIT_MODERATE),
                                         crypto_pwhash_argon2i_ALG_ARGON2I13) == 0 else {
                 throw EncryptionError.keyGenerationFailed
             }
