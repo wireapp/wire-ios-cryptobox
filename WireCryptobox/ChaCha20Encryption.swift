@@ -64,15 +64,15 @@ public final class ChaCha20Encryption {
                 })
             }
             
-            static func partition(buffer: Array<UInt8>, _ into: (_ partition: ArraySlice<UInt8>, _ part: Field) throws -> Void) throws {
+            static func partition(buffer: Array<UInt8>, _ into: (_ partition: ArraySlice<UInt8>, _ field: Field) throws -> Void) throws {
                 guard buffer.count == Field.sizeOfAllFields else {
                     throw EncryptionError.malformedHeader
                 }
                 
                 var index = 0
-                for part in layout {
-                    let upperBound = index + part.rawValue
-                    try into(buffer[index..<upperBound], part)
+                for field in layout {
+                    let upperBound = index + field.rawValue
+                    try into(buffer[index..<upperBound], field)
                     index = upperBound
                 }
             }
@@ -90,8 +90,8 @@ public final class ChaCha20Encryption {
             var salt: Array<UInt8> = Array<UInt8>(repeating: 0, count: Field.salt.rawValue)
             var hash: Array<UInt8> = Array<UInt8>(repeating: 0, count: Field.uuidHash.rawValue)
             
-            try Field.partition(buffer: buffer) { (partition, part) in
-                switch part {
+            try Field.partition(buffer: buffer) { (partition, field) in
+                switch field {
                 case .platform:
                     guard Array(partition) == [UInt8](Header.platform) else {
                         throw EncryptionError.malformedHeader
