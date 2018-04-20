@@ -153,7 +153,7 @@ public final class ChaCha20Encryption {
                                         uuidAsBytes.map(Int8.init),
                                         UInt64(uuidAsBytes.count),
                                         salt,
-                                        1,
+                                        UInt64(crypto_pwhash_OPSLIMIT_INTERACTIVE),
                                         Int(crypto_pwhash_MEMLIMIT_INTERACTIVE),
                                         crypto_pwhash_argon2i_ALG_ARGON2I13) == 0 else {
                 throw EncryptionError.keyGenerationFailed
