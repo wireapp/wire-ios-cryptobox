@@ -41,81 +41,96 @@ public final class ChaCha20Encryption {
         case keyGenerationFailed
         /// Passphrase UUID is different from what was used during encryption
         case mismatchingUUID
-        /// File was encrypted on a unsupported platform
-        case unsupportedPlatform
         /// Failure initializing sodium
         case failureInitializingSodium
         /// Unknown error
         case unknown
     }
     
-    internal enum Platform: String {
-        case iOS = "WBUI"
-        case Android = "WBUA"
-        case Web = "WBUD"
-        
-        init?(buffer: Array<UInt8>) {
-            guard buffer.count == 4, let platform = String(bytes: buffer, encoding: .ascii) else {
-                return nil
-            }
-            
-            self.init(rawValue: platform)
-        }
-        
-        var bytes: Data {
-            return rawValue.data(using: .ascii)!
-        }
-    }
-    
     internal struct Header {
         
-        public static var size: Int = 55
+        enum Field: Int {
+            case platform = 4
+            case emptySpace = 1
+            case version = 2
+            case salt = 16
+            case uuidHash = 32
+            
+            static var layout: [Field] {
+                return [.platform, .emptySpace, .version, .salt, .uuidHash]
+            }
+            
+            static var sizeOfAllFields: Int {
+                return layout.reduce(0, { result, part in
+                    result + part.rawValue
+                })
+            }
+            
+            static func partition(buffer: Array<UInt8>, _ into: (_ partition: ArraySlice<UInt8>, _ part: Field) throws -> Void) throws {
+                guard buffer.count == Field.sizeOfAllFields else {
+                    throw EncryptionError.malformedHeader
+                }
+                
+                var index = 0
+                for part in layout {
+                    let upperBound = index + part.rawValue
+                    try into(buffer[index..<upperBound], part)
+                    index = upperBound
+                }
+            }
+        }
         
-        static let platformRange = (0..<4)
-        static let versionRange = (5..<7)
-        static let saltRange = (7..<23)
-        static let hashRange = (23..<55)
+        public static let version: UInt16 = 1
+        public static let platform = "WBUI".data(using: .ascii)!
         
         let buffer: Array<UInt8>
-        
-        var salt: ArraySlice<UInt8> {
-            return buffer[Header.saltRange]
-        }
-        var uuidHash: ArraySlice<UInt8> {
-            return buffer[Header.hashRange]
-        }
-        var platform: Platform
-        var version: UInt16
+        let salt: Array<UInt8>
+        let uuidHash: Array<UInt8>
         
         init(buffer: Array<UInt8>) throws {
             
-            guard buffer.count == Header.size else {
-                throw EncryptionError.malformedHeader
+            var salt: Array<UInt8> = Array<UInt8>(repeating: 0, count: Field.salt.rawValue)
+            var hash: Array<UInt8> = Array<UInt8>(repeating: 0, count: Field.uuidHash.rawValue)
+            
+            try Field.partition(buffer: buffer) { (partition, part) in
+                switch part {
+                case .platform:
+                    guard Array(partition) == [UInt8](Header.platform) else {
+                        throw EncryptionError.malformedHeader
+                    }
+                case .emptySpace:
+                    break
+                case .version:
+                    guard UInt16(bigEndian: Data(bytes: Array(partition)).withUnsafeBytes { $0.pointee }) == Header.version else {
+                        throw EncryptionError.malformedHeader
+                    }
+                case .salt:
+                    salt = Array(partition)
+                case .uuidHash:
+                    hash = Array(partition)
+                }
             }
             
-            guard let platform = Platform(buffer: Array(buffer[Header.platformRange])) else  {
-                throw EncryptionError.malformedHeader
-            }
-            
-            self.platform = platform
-            self.version = UInt16(bigEndian: Data(bytes: Array(buffer[Header.versionRange])).withUnsafeBytes { $0.pointee })
+            self.salt = salt
+            self.uuidHash = hash
             self.buffer = buffer
         }
         
-        init(uuid: UUID, platform: Platform = .iOS) throws {
+        init(uuid: UUID) throws {
             var buffer = Array<UInt8>()
-            
-            buffer.append(contentsOf: [UInt8](platform.bytes))
-            buffer.append(0)
-            buffer.append(contentsOf: [0, 1])
-            
+            var version = Header.version.bigEndian
             var salt = Array<UInt8>(repeating: 0, count: Int(crypto_pwhash_argon2i_SALTBYTES))
             randombytes(&salt, UInt64(crypto_pwhash_argon2i_SALTBYTES))
-            buffer.append(contentsOf: salt)
-            buffer.append(contentsOf: try Header.hash(uuid: uuid, salt: salt))
+            let uuidHash = try Header.hash(uuid: uuid, salt: salt)
             
-            self.version = 1
-            self.platform = platform
+            buffer.append(contentsOf: [UInt8](Header.platform))
+            buffer.append(0)
+            buffer.append(contentsOf: [UInt8](Data(buffer: UnsafeBufferPointer(start: &version, count: 1))))
+            buffer.append(contentsOf: salt)
+            buffer.append(contentsOf: uuidHash)
+            
+            self.salt = salt
+            self.uuidHash = uuidHash
             self.buffer = buffer
         }
         
@@ -132,7 +147,7 @@ public final class ChaCha20Encryption {
         fileprivate static func hash(uuid: UUID, salt: Array<UInt8>) throws -> Array<UInt8> {
             var uuidAsBytes = Array<UInt8>(repeating: 0, count: 128)
             (uuid as NSUUID).getBytes(&uuidAsBytes)
-            
+                        
             let hashSize = 32
             var hash = Array<UInt8>(repeating: 0, count: hashSize)
             guard crypto_pwhash_argon2i(&hash,
@@ -315,18 +330,13 @@ public final class ChaCha20Encryption {
         var bytesWritten = -1
         var bytesRead = -1
         
-        var fileHeaderBuffer = Array<UInt8>(repeating: 0, count: Int(Header.size))
+        var fileHeaderBuffer = Array<UInt8>(repeating: 0, count: Int(Header.Field.sizeOfAllFields))
         
-        guard input.read(&fileHeaderBuffer, maxLength: Header.size) > 0  else {
+        guard input.read(&fileHeaderBuffer, maxLength: Header.Field.sizeOfAllFields) > 0  else {
             throw EncryptionError.readError(input.streamError ?? EncryptionError.unexpectedStreamEnd)
         }
         
         let fileHeader = try Header(buffer: fileHeaderBuffer)
-        
-        guard fileHeader.platform == .iOS, fileHeader.version == 1 else {
-            throw EncryptionError.unsupportedPlatform
-        }
-        
         let key = try fileHeader.deriveKey(from: passphrase)
         var state = crypto_secretstream_xchacha20poly1305_state()
         var chachaHeader = Array<UInt8>(repeating: 0, count: Int(crypto_secretstream_xchacha20poly1305_HEADERBYTES))

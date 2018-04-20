@@ -21,17 +21,13 @@ import XCTest
 
 class ChaCha20FileHeaderTests: XCTestCase {
     
-    func testThatFileHeaderIsWrittenWithCorrectMemoryLayout() throws {
+    func testThatWrittenFileHeaderCanBeRead() throws {
         // given
         let uuid = UUID()
-        
+        let header = try ChaCha20Encryption.Header(uuid: uuid)
+
         // when
-        let header = try ChaCha20Encryption.Header(uuid: uuid, platform: .iOS)
-        
-        // then
-        XCTAssertEqual(header.buffer.count, ChaCha20Encryption.Header.size)
-        XCTAssertEqual(Array(header.buffer[ChaCha20Encryption.Header.platformRange]), [UInt8](ChaCha20Encryption.Platform.iOS.bytes))
-        XCTAssertEqual(Array(header.buffer[ChaCha20Encryption.Header.versionRange]), [0, 1])
+        _ = try ChaCha20Encryption.Header(buffer: header.buffer)
     }
     
     func testThatFileHeaderCanBeReadFromBuffer() throws {
@@ -41,12 +37,7 @@ class ChaCha20FileHeaderTests: XCTestCase {
         // when
         let header = try ChaCha20Encryption.Header(buffer: [UInt8](buffer))
         
-        var foo = header.buffer
-        foo[3] = 65
-    
         // then
-        XCTAssertEqual(header.platform, .iOS)
-        XCTAssertEqual(header.version, 1)
         XCTAssertEqual(header.salt, [15, 2, 129, 15 ,226 ,145, 190, 233, 34, 69, 131, 134, 16, 228, 99, 187])
         XCTAssertEqual(header.uuidHash, [140, 197, 233, 139, 140, 105, 207, 52, 157, 168, 132, 132, 196, 122, 76, 216, 3, 48, 49, 202, 3, 197, 223, 163, 233, 43, 15, 71, 94, 177, 153, 90 ])
     }
@@ -167,22 +158,7 @@ class ChaCha20EncryptionTests: XCTestCase {
         // then
         XCTAssertEqual(decryptedMessage, messageData)
     }
-    
-//    func testThatEncryptionAndDecryptionWorksWithPassphrase() throws {
-//
-//        // given
-//        let passphrase = "helloworld"
-//        let message = "123456789"
-//        let messageData =  message.data(using: .utf8)!
-//
-//        // when
-//        let encryptedMessage = try encrypt(messageData, key: ChaCha20Encryption.Key(passphrase: passphrase)!)
-//        let decryptedMessage = try decrypt(encryptedMessage, key: ChaCha20Encryption.Key(passphrase: passphrase)!)
-//
-//        // then
-//        XCTAssertEqual(decryptedMessage, messageData)
-//    }
-    
+        
     func testThatEncryptionAndDecryptionWorks_ToDisk() throws {
         
         // given
@@ -198,21 +174,6 @@ class ChaCha20EncryptionTests: XCTestCase {
         XCTAssertEqual(decryptedMessage, messageData)
     }
     
-//    func testThatEncryptionAndDecryptionWorksWithPassphrase_ToDisk() throws {
-//
-//        // given
-//        let passphrase = "helloworld"
-//        let message = "123456789"
-//        let messageData =  message.data(using: .utf8)!
-//
-//        // when
-//        let encryptedDataURL = try encryptToURL(messageData, key: ChaCha20Encryption.Key(passphrase: passphrase)!)
-//        let decryptedMessage = try decryptFromURL(encryptedDataURL, key: ChaCha20Encryption.Key(passphrase: passphrase)!)
-//
-//        // then
-//        XCTAssertEqual(decryptedMessage, messageData)
-//    }
-//
     func testThatItThrowsWriteErrorWhenOutputStreamFailsWhileEncrypting() throws {
         
         // given
@@ -317,7 +278,7 @@ class ChaCha20EncryptionTests: XCTestCase {
         }
     }
     
-    func testThatItThrowsUnsupportedPlatformWhenDecryptingFileEncryptedOnDifferentPlatform() {
+    func testThatItThrowsMalformedHeaderWhenDecryptingFileEncryptedOnDifferentPlatform() {
         
         // given
         let uuid1 = UUID()
@@ -331,14 +292,14 @@ class ChaCha20EncryptionTests: XCTestCase {
             var modifiedMessage = [UInt8](encryptedMessage)
             modifiedMessage[3] = 65 // replace I with A (A = Android)
             _ = try decrypt(Data(bytes: modifiedMessage), passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid2))
-        } catch ChaCha20Encryption.EncryptionError.unsupportedPlatform {
+        } catch ChaCha20Encryption.EncryptionError.malformedHeader {
             return // success
         } catch {
             XCTFail()
         }
     }
     
-    func testThatItThrowsUnsupportedPlatformWhenDecryptingFileEncryptedWithUnsupportedVersion() {
+    func testThatItThrowsMalformedHeaderWhenDecryptingFileEncryptedWithUnsupportedVersion() {
         
         // given
         let uuid1 = UUID()
@@ -352,7 +313,7 @@ class ChaCha20EncryptionTests: XCTestCase {
             var modifiedMessage = [UInt8](encryptedMessage)
             modifiedMessage[6] = 2 // change version number
             _ = try decrypt(Data(bytes: modifiedMessage), passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid2))
-        } catch ChaCha20Encryption.EncryptionError.unsupportedPlatform {
+        } catch ChaCha20Encryption.EncryptionError.malformedHeader {
             return // success
         } catch {
             XCTFail()
