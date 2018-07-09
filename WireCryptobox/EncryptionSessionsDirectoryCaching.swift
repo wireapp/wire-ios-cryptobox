@@ -33,7 +33,7 @@ class CachingEncryptor: Encryptor {
     
     public func encrypt(_ plainText: Data, for recipientIdentifier: WireCryptobox.EncryptionSessionIdentifier) throws -> Data {
         guard let backingEncryptor = self.backingEncryptor else {
-            fatalError("Backing enryptor missing")
+            fatalError("backingEncryptor missing")
         }
         
         let cacheID: NSString = ("\(plainText.hashValue)" + recipientIdentifier.rawValue) as NSString
