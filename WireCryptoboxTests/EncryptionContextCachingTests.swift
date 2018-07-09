@@ -22,6 +22,16 @@ import XCTest
 
 let someTextToEncrypt = "ENCRYPT THIS!"
 
+class DebugEncryptor: Encryptor {
+    var index: Int = 0
+    func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
+        var result = plainText
+        result.append(recipientIdentifier.rawValue.data(using: .utf8)!)
+        result.append("\(index)".data(using: .utf8)!)
+        return result
+    }
+}
+
 class EncryptionContextCachingTests: XCTestCase {
     func testThatItDoesNotCachePerDefault() {
         // GIVEN
@@ -92,17 +102,32 @@ class EncryptionContextCachingTests: XCTestCase {
         self.waitForExpectations(timeout: 0) { _ in }
     }
     
+    func testThatItFlushesTheCache() {
+        // GIVEN
+        let tempDir = createTempFolder()
+        let mainContext = EncryptionContext(path: tempDir)
+        
+        let expectation = self.expectation(description: "Encryption succeeded")
+        
+        // WHEN
+        mainContext.perform { sessionContext in
+            try! sessionContext.createClientSession(hardcodedClientId, base64PreKeyString: hardcodedPrekey)
+            
+            let encryptedDataFirst  = try! sessionContext.cachingEncryptor.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+            sessionContext.flushEncryptionCache()
+            let encryptedDataSecond = try! sessionContext.cachingEncryptor.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+            
+            XCTAssertNotEqual(encryptedDataFirst, encryptedDataSecond)
+            
+            expectation.fulfill()
+        }
+        
+        // THEN
+        self.waitForExpectations(timeout: 0) { _ in }
+    }
+    
     func testThatCacheKeyDependsOnSessionId() throws {
         // GIVEN
-        class DebugEncryptor: Encryptor {
-            var index: Int = 0
-            func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
-                var result = plainText
-                result.append(recipientIdentifier.rawValue.data(using: .utf8)!)
-                result.append("\(index)".data(using: .utf8)!)
-                return result
-            }
-        }
         let debugEncryptor = DebugEncryptor()
         let cachingEncryptor = CachingEncryptor(encryptor: debugEncryptor)
         
@@ -117,15 +142,6 @@ class EncryptionContextCachingTests: XCTestCase {
     
     func testThatItCachesWhenRequested_SimpleSetup() throws {
         // GIVEN
-        class DebugEncryptor: Encryptor {
-            var index: Int = 0
-            func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
-                var result = plainText
-                result.append(recipientIdentifier.rawValue.data(using: .utf8)!)
-                result.append("\(index)".data(using: .utf8)!)
-                return result
-            }
-        }
         let debugEncryptor = DebugEncryptor()
         let cachingEncryptor = CachingEncryptor(encryptor: debugEncryptor)
         // WHEN

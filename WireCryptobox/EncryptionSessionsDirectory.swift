@@ -106,6 +106,10 @@ public final class EncryptionSessionsDirectory : NSObject {
     
     /// Returns the caching version of the encryptor, that is only going to encrypt the given data once.
     public lazy var cachingEncryptor: Encryptor = CachingEncryptor(encryptor: self)
+    
+    public func flushEncryptionCache() {
+        cachingEncryptor = CachingEncryptor(encryptor: self)
+    }
 }
 
 // MARK: - Encryption sessions
