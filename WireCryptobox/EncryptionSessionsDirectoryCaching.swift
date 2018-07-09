@@ -20,7 +20,7 @@ import Foundation
 
 // Caching proxy for @c backingEncryptor
 class CachingEncryptor: Encryptor {
-    private weak var backingEncryptor: Encryptor?
+    private unowned let backingEncryptor: Encryptor
     private let cache = NSCache<NSString, NSData>()
     
     public init(encryptor: Encryptor) {
@@ -28,14 +28,12 @@ class CachingEncryptor: Encryptor {
         
         cache.countLimit = 100
         cache.name = "Encrypted payloads cache"
-        cache.totalCostLimit = 100_000 // Max 100 KB of data
+        // The maximum size of the end-to-end encrypted payload is defined by ZMClientMessageByteSizeExternalThreshold
+        // It's currently 128KB of data. We will allow up to 8 messages of maximum size to persist in the cache.
+        cache.totalCostLimit = 1_000_000 // = Max 1 MB of data
     }
     
     public func encrypt(_ plainText: Data, for recipientIdentifier: WireCryptobox.EncryptionSessionIdentifier) throws -> Data {
-        guard let backingEncryptor = self.backingEncryptor else {
-            fatalError("backingEncryptor missing")
-        }
-        
         let cacheID: NSString = ("\(plainText.hashValue)" + recipientIdentifier.rawValue) as NSString
         
         if let cachedObject = cache.object(forKey: cacheID) {
