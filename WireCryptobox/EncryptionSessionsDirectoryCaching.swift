@@ -23,6 +23,10 @@ class CachingEncryptor: Encryptor {
     private unowned let backingEncryptor: Encryptor
     private let cache = NSCache<NSString, NSData>()
     
+    deinit {
+        zmLog.debug("Cache flushed / deallocated")
+    }
+    
     public init(encryptor: Encryptor) {
         backingEncryptor = encryptor
         
@@ -37,9 +41,11 @@ class CachingEncryptor: Encryptor {
         let cacheID: NSString = ("\(plainText.hashValue)" + recipientIdentifier.rawValue) as NSString
         
         if let cachedObject = cache.object(forKey: cacheID) {
+            zmLog.debug("Cache hit: \(cacheID)")
             return cachedObject as Data
         }
         else {
+            zmLog.debug("Cache miss: \(cacheID)")
             let data = try backingEncryptor.encrypt(plainText, for: recipientIdentifier)
             cache.setObject(data as NSData, forKey: cacheID, cost: data.count)
             return data
