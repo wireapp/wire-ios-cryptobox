@@ -67,8 +67,8 @@ class EncryptionContextCachingTests: XCTestCase {
         mainContext.perform { sessionContext in
             try! sessionContext.createClientSession(hardcodedClientId, base64PreKeyString: hardcodedPrekey)
             
-            let encryptedDataFirst  = try! sessionContext.cachingEncryptor.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
-            let encryptedDataSecond = try! sessionContext.cachingEncryptor.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+            let encryptedDataFirst  = try! sessionContext.encryptCaching(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+            let encryptedDataSecond = try! sessionContext.encryptCaching(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
             
             XCTAssertEqual(encryptedDataFirst, encryptedDataSecond)
             
@@ -90,8 +90,8 @@ class EncryptionContextCachingTests: XCTestCase {
         mainContext.perform { sessionContext in
             try! sessionContext.createClientSession(hardcodedClientId, base64PreKeyString: hardcodedPrekey)
             
-            let encryptedDataFirst  = try! sessionContext.cachingEncryptor.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
-            let encryptedDataSecond = try! sessionContext.cachingEncryptor.encrypt(someTextToEncrypt.appending(someTextToEncrypt).data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+            let encryptedDataFirst  = try! sessionContext.encryptCaching(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+            let encryptedDataSecond = try! sessionContext.encryptCaching(someTextToEncrypt.appending(someTextToEncrypt).data(using: String.Encoding.utf8)!, for: hardcodedClientId)
             
             XCTAssertNotEqual(encryptedDataFirst, encryptedDataSecond)
             
@@ -113,9 +113,9 @@ class EncryptionContextCachingTests: XCTestCase {
         mainContext.perform { sessionContext in
             try! sessionContext.createClientSession(hardcodedClientId, base64PreKeyString: hardcodedPrekey)
             
-            let encryptedDataFirst  = try! sessionContext.cachingEncryptor.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
-            sessionContext.flushEncryptionCache()
-            let encryptedDataSecond = try! sessionContext.cachingEncryptor.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+            let encryptedDataFirst  = try! sessionContext.encryptCaching(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+            sessionContext.purgeEncryptedPayloadCache()
+            let encryptedDataSecond = try! sessionContext.encryptCaching(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
             
             XCTAssertNotEqual(encryptedDataFirst, encryptedDataSecond)
             
@@ -124,31 +124,5 @@ class EncryptionContextCachingTests: XCTestCase {
         
         // THEN
         self.waitForExpectations(timeout: 0) { _ in }
-    }
-    
-    func testThatCacheKeyDependsOnSessionId() throws {
-        // GIVEN
-        let debugEncryptor = DebugEncryptor()
-        let cachingEncryptor = CachingEncryptor(encryptor: debugEncryptor)
-        
-        let otherSessionIdentifier = EncryptionSessionIdentifier(rawValue: "1e9b4e187a9eb716")
-        // WHEN
-        
-        let data1 = try cachingEncryptor.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
-        let data2 = try cachingEncryptor.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: otherSessionIdentifier)
-        // THEN
-        XCTAssertNotEqual(data1, data2)
-    }
-    
-    func testThatItCachesWhenRequested_SimpleSetup() throws {
-        // GIVEN
-        let debugEncryptor = DebugEncryptor()
-        let cachingEncryptor = CachingEncryptor(encryptor: debugEncryptor)
-        // WHEN
-        
-        let data1 = try cachingEncryptor.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
-        let data2 = try cachingEncryptor.encrypt(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
-        // THEN
-        XCTAssertEqual(data1, data2)
     }
 }

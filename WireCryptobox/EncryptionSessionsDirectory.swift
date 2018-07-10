@@ -62,6 +62,8 @@ public final class EncryptionSessionsDirectory : NSObject {
     /// Local fingerprint
     public var localFingerprint : Data
     
+    fileprivate let encryptionPayloadCache: Cache<GenericHash, Data>
+    
     /// Cache of transient sessions, indexed by client ID.
     /// Transient sessions are session that are (potentially) modified in memory
     /// and not yet committed to disk. When trying to load a session,
@@ -76,9 +78,10 @@ public final class EncryptionSessionsDirectory : NSObject {
     /// load once and save once at the end.
     fileprivate var pendingSessionsCache : [EncryptionSessionIdentifier : EncryptionSession] = [:]
     
-    init(generatingContext: EncryptionContext) {
+    init(generatingContext: EncryptionContext, encryptionPayloadCache: Cache<GenericHash, Data>) {
         self.generatingContext = generatingContext
         self.localFingerprint = generatingContext.implementation.localFingerprint
+        self.encryptionPayloadCache = encryptionPayloadCache
         super.init()
     }
     
@@ -104,11 +107,31 @@ public final class EncryptionSessionsDirectory : NSObject {
         self.commitCache()
     }
     
-    /// Returns the caching version of the encryptor, that is only going to encrypt the given data once.
-    public lazy var cachingEncryptor: Encryptor = CachingEncryptor(encryptor: self)
+    private func hash(for data: Data, recepient: EncryptionSessionIdentifier) -> GenericHash {
+        let builder = GenericHashBuilder()
+        builder.append(data)
+        builder.append(recepient.rawValue.data(using: .utf8)!)
+        return builder.build()
+    }
     
-    public func flushEncryptionCache() {
-        cachingEncryptor = CachingEncryptor(encryptor: self)
+    public func encryptCaching(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
+        let key = hash(for: plainText, recepient: recipientIdentifier)
+        
+        if let cachedObject = encryptionPayloadCache.value(for: key) {
+            zmLog.debug("Cache hit: \(key)")
+            return cachedObject
+        }
+        else {
+            zmLog.debug("Cache miss: \(key)")
+            let data = try encrypt(plainText, for: recipientIdentifier)
+            encryptionPayloadCache.set(value: data, for: key, cost: data.count)
+            return data
+        }
+    }
+    
+    public func purgeEncryptedPayloadCache() {
+        zmLog.debug("Cache purged")
+        encryptionPayloadCache.purge()
     }
 }
 

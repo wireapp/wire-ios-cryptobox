@@ -23,7 +23,7 @@ import XCTest
 class CacheTests: XCTestCase {
     func testThatItStoresAndReadsValue() {
         // GIVEN
-        let cache = CachingEncryptor.Cache<String, String>(maxCost: 1000, maxElements: 10)
+        let cache = Cache<String, String>(maxCost: 1000, maxElements: 10)
         // WHEN
         cache.set(value: "Hello", for: "word", cost: 1)
         // THEN
@@ -32,7 +32,7 @@ class CacheTests: XCTestCase {
     
     func testThatItPurgesWhenTooManyElements() {
         // GIVEN
-        let cache = CachingEncryptor.Cache<String, String>(maxCost: 1000, maxElements: 10)
+        let cache = Cache<String, String>(maxCost: 1000, maxElements: 10)
         // WHEN
         (0..<11).forEach {
             cache.set(value: "Hello \($0)", for: "word \($0)", cost: 1)
@@ -46,7 +46,7 @@ class CacheTests: XCTestCase {
     
     func testThatItPurgesWhenCostIsTooHigh() {
         // GIVEN
-        let cache = CachingEncryptor.Cache<String, String>(maxCost: 10, maxElements: 10)
+        let cache = Cache<String, String>(maxCost: 10, maxElements: 10)
         // WHEN
         cache.set(value: "Hello 0", for: "word 0", cost: 2)
         cache.set(value: "Hello 1", for: "word 1", cost: 2)
@@ -62,7 +62,7 @@ class CacheTests: XCTestCase {
     
     func testThatItPurgesWhenCostIsTooHigh_MultipleDeletes() {
         // GIVEN
-        let cache = CachingEncryptor.Cache<String, String>(maxCost: 10, maxElements: 10)
+        let cache = Cache<String, String>(maxCost: 10, maxElements: 10)
         // WHEN
         cache.set(value: "Hello 0", for: "word 0", cost: 1)
         cache.set(value: "Hello 1", for: "word 1", cost: 1)
