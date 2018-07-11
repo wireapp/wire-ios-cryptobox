@@ -107,15 +107,15 @@ public final class EncryptionSessionsDirectory : NSObject {
         self.commitCache()
     }
     
-    private func hash(for data: Data, recepient: EncryptionSessionIdentifier) -> GenericHash {
+    private func hash(for data: Data, recipient: EncryptionSessionIdentifier) -> GenericHash {
         let builder = GenericHashBuilder()
         builder.append(data)
-        builder.append(recepient.rawValue.data(using: .utf8)!)
+        builder.append(recipient.rawValue.data(using: .utf8)!)
         return builder.build()
     }
     
     public func encryptCaching(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
-        let key = hash(for: plainText, recepient: recipientIdentifier)
+        let key = hash(for: plainText, recipient: recipientIdentifier)
         
         if let cachedObject = encryptionPayloadCache.value(for: key) {
             zmLog.debug("Cache hit: \(key)")
