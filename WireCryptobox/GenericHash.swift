@@ -18,6 +18,7 @@
 
 import Foundation
 
+/// Encapsulates the hash value.
 public struct GenericHash: Hashable {
     public let hashValue: Int
     
@@ -32,6 +33,13 @@ extension GenericHash: CustomStringConvertible {
     }
 }
 
+/// This class is designed to generate the hash value for the given input data.
+/// Sample usage:
+///
+///     let builder = GenericHashBuilder()
+///     builder.append(data1)
+///     builder.append(data2)
+///     let hash = builder.build()
 public final class GenericHashBuilder {
     private enum State {
         case initial

@@ -114,6 +114,9 @@ public final class EncryptionSessionsDirectory : NSObject {
         return builder.build()
     }
     
+    /// Encrypts data for a client. Caches the encrypted payload based on `hash(data + recepient)` as the cache key.
+    /// It invokes @c encrypt() in case of the cache miss.
+    /// - throws: EncryptionSessionError in case no session with given recipient
     public func encryptCaching(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
         let key = hash(for: plainText, recipient: recipientIdentifier)
         
@@ -129,6 +132,7 @@ public final class EncryptionSessionsDirectory : NSObject {
         }
     }
     
+    /// Purges the cache of encrypted payloads created as the result of @c encryptCaching() call
     public func purgeEncryptedPayloadCache() {
         zmLog.debug("Cache purged")
         encryptionPayloadCache.purge()
@@ -484,7 +488,7 @@ class EncryptionSession {
 public protocol Encryptor: class {
     /// Encrypts data for a client
     /// It immediately saves the session
-    /// - returns: nil if there is no session with that client
+    /// - throws: EncryptionSessionError in case no session with given recipient
     func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data
 }
 
@@ -492,7 +496,7 @@ public protocol Encryptor: class {
 public protocol Decryptor: class {
     /// Decrypts data from a client
     /// The session is not saved to disk until the cache is committed
-    /// - returns: nil if there is no session with that client
+    /// - throws: EncryptionSessionError in case no session with given recipient
     func decrypt(_ cypherText: Data, from senderIdentifier: EncryptionSessionIdentifier) throws -> Data
 }
 
