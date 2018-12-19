@@ -228,7 +228,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                           prekeyData.count,
                                           &cbsession.ptr)
         }
-        zmLog.debug("Create session from prekey \(base64PreKeyString) for client: \(identifier)")
+        zmLog.debug("Create session for client: \(identifier)")
         
         try result.throwIfError()
 
@@ -253,8 +253,8 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                            &cbsession.ptr,
                                            &plainTextBacking)
         }
-        zmLog.debug("Create session for client \(identifier) from prekey message: \(prekeyMessage.base64Dump)")
-        
+        zmLog.debug("Create session for client \(identifier) from prekey message")
+
         try result.throwIfError()
 
         let plainText = Data.moveFromCBoxVector(plainTextBacking)!
@@ -531,9 +531,8 @@ extension EncryptionSession {
     fileprivate func decrypt(_ cypher: Data) throws -> Data {
         var vectorBacking : OpaquePointer? = nil
 
-        zmLog.ifDebug {
-            zmLog.debug("Decrypting with session \(self.id): \(cypher.base64Dump)")
-        }
+        zmLog.debug("Decrypting with session \(self.id)")
+
         let result = cypher.withUnsafeBytes { (cypherPointer: UnsafePointer<UInt8>) -> CBoxResult in
             cbox_decrypt(self.implementation.ptr,
                          cypherPointer,
