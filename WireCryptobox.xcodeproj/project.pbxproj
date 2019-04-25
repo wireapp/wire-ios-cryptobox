@@ -243,7 +243,6 @@
 		F10C8E231E9296BA00020408 /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
 		F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
 		F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
-		F1E148D2207D06EF00F81833 /* swift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
 		F1E148D3207D06EF00F81833 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		F1E148D4207D06EF00F81833 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
 		F50303291B8CFA2C0053E406 /* libcryptobox.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcryptobox.a; sourceTree = "<group>"; };
@@ -338,7 +337,6 @@
 				F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */,
 				F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */,
 				F1E148D4207D06EF00F81833 /* ios.xcconfig */,
-				F1E148D2207D06EF00F81833 /* swift.xcconfig */,
 				F1E148D3207D06EF00F81833 /* tests.xcconfig */,
 				54B5E1E01F0A482B001F43A6 /* project-common.xcconfig */,
 				54B5E1E11F0A482B001F43A6 /* project-debug.xcconfig */,
