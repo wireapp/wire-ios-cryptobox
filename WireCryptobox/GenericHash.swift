@@ -21,9 +21,13 @@ import Foundation
 /// Encapsulates the hash value.
 public struct GenericHash: Hashable {
     public let hashValue: Int
-    
+
     fileprivate init(hashValue: Int) {
         self.hashValue = hashValue
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(hashValue)
     }
 }
 
