@@ -669,10 +669,9 @@
 			};
 			buildConfigurationList = BA7EF9591B7109B600204A8E /* Build configuration list for PBXProject "WireCryptobox" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
