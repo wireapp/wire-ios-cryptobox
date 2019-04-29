@@ -221,10 +221,10 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         
         // init
         let cbsession = _CBoxSession()
-        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer : UnsafePointer<UInt8>) -> CBoxResult in
+        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer : UnsafeRawBufferPointer) -> CBoxResult in
             cbox_session_init_from_prekey(context.implementation.ptr,
                                           identifier.rawValue,
-                                          prekeyDataPointer,
+                                          prekeyDataPointer.bindMemory(to: UInt8.self).baseAddress!,
                                           prekeyData.count,
                                           &cbsession.ptr)
         }
@@ -609,6 +609,10 @@ public struct EncryptionSessionIdentifier : Hashable, Equatable {
     
     public var hashValue: Int {
         return self.rawValue.hashValue
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(hashValue)
     }
 }
 
