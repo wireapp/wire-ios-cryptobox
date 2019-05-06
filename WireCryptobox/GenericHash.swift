@@ -23,8 +23,8 @@ import Foundation
 public struct GenericHash: Hashable {
     private let value: Int
 
-    fileprivate init(hashValue: Int) {
-        self.value = hashValue
+    init(value: Int) {
+        self.value = value
     }
 }
 
@@ -82,6 +82,6 @@ public final class GenericHashBuilder {
             ($0.baseAddress!.withMemoryRebound(to: Int.self, capacity: 1) { $0 })
             }.pointee
         
-        return GenericHash(hashValue: Int(bigEndian: bigEndianValue))
+        return GenericHash(value: Int(bigEndian: bigEndianValue))
     }
 }
