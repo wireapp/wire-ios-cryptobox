@@ -19,6 +19,7 @@
 
 import Foundation
 import WireSystem
+import WireUtilities
 
 @objc enum EncryptionSessionError : Int {
     
@@ -173,7 +174,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
     
     public func migrateSession(from previousIdentifier: String, to newIdentifier: EncryptionSessionIdentifier) {
         
-        let previousSessionIdentifier = EncryptionSessionIdentifier(rawValue: previousIdentifier)
+        let previousSessionIdentifier = EncryptionSessionIdentifier(fromLegacyV1Identifier: previousIdentifier)
         // this scopes guarantee that `old` is released
         repeat {
             guard let old = clientSession(for: previousSessionIdentifier) else {
@@ -215,7 +216,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
 
         // check if pre-existing
         if clientSession(for: identifier) != nil {
-            zmLog.debug("Tried to create session for client \(identifier) with prekey but session already existed")
+            zmLog.safePublic("Tried to create session for client \(identifier) with prekey but session already existed")
             return
         }
         
@@ -228,7 +229,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                           prekeyData.count,
                                           &cbsession.ptr)
         }
-        zmLog.debug("Create session for client: \(identifier)")
+        zmLog.safePublic("Create session for client \(identifier)")
         
         try result.throwIfError()
 
@@ -252,7 +253,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                            &cbsession.ptr,
                                            &plainTextBacking)
         }
-        zmLog.debug("Create session for client \(identifier) from prekey message")
+        zmLog.safePublic("Create session for client \(identifier) from prekey message")
 
         try result.throwIfError()
 
@@ -269,7 +270,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         let context = self.validateContext()
         self.discardFromCache(identifier)
         let result = cbox_session_delete(context.implementation.ptr, identifier.rawValue)
-        zmLog.debug("Delete session for client: \(identifier)")
+        zmLog.safePublic("Delete session for client \(identifier)")
 
         guard result == CBOX_SUCCESS else {
             fatal("Error in deletion in cbox: \(result)")
@@ -283,7 +284,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         
         // check cache
         if let transientSession = self.pendingSessionsCache[identifier] {
-            zmLog.debug("Tried to load session for client \(identifier), session was already loaded")
+            zmLog.safePublic("Tried to load session for client \(identifier), session was already loaded")
             return transientSession
         }
         
@@ -291,7 +292,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         let result = cbox_session_load(context.implementation.ptr, identifier.rawValue, &cbsession.ptr)
         switch(result) {
         case CBOX_SESSION_NOT_FOUND:
-            zmLog.debug("Tried to load session for client \(identifier), no session found")
+            zmLog.safePublic("Tried to load session for client \(identifier), no session found")
             return nil
         case CBOX_SUCCESS:
             let session = EncryptionSession(id: identifier,
@@ -299,7 +300,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                             requiresSave: false,
                                             cryptoboxPath: self.generatingContext!.path)
             self.pendingSessionsCache[identifier] = session
-            zmLog.debug("Loaded session for client \(identifier)")
+            zmLog.safePublic("Loaded session for client \(identifier)")
             return session
         default:
             fatalError("Error in loading from cbox: \(result)")
@@ -311,7 +312,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
     }
     
     public func discardCache() {
-        zmLog.debug("Discarded all sessions from cache")
+        zmLog.safePublic("Discarded all sessions from cache")
         self.pendingSessionsCache = [:]
     }
     
@@ -325,7 +326,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
     
     /// Closes a transient session. Any unsaved change will be lost
     fileprivate func discardFromCache(_ identifier: EncryptionSessionIdentifier) {
-        zmLog.debug("Discarded session \(identifier.rawValue) from cache")
+        zmLog.safePublic("Discarded session \(identifier) from cache")
         self.pendingSessionsCache.removeValue(forKey: identifier)
     }
     
@@ -475,14 +476,14 @@ class EncryptionSession {
     
     /// Closes the session in CBox
     fileprivate func closeInCryptobox() {
-        zmLog.debug("Closing cryptobox session \(id)")
+        zmLog.safePublic("Closing cryptobox session \(id)")
         cbox_session_close(self.implementation.ptr)
     }
     
     /// Save the session to disk
     fileprivate func save(_ cryptobox: _CBox) {
         if self.hasChanges {
-            zmLog.debug("Saving cryptobox session \(self.id)")
+            zmLog.safePublic("Saving cryptobox session \(id)")
             let result = cbox_session_save(cryptobox.ptr, self.implementation.ptr)
             switch(result) {
             case CBOX_SUCCESS:
@@ -519,7 +520,7 @@ extension EncryptionSessionsDirectory: Encryptor, Decryptor {
     public func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
         _ = self.validateContext()
         guard let session = self.clientSession(for: recipientIdentifier) else {
-            zmLog.debug("Can't find session to encrypt for client \(recipientIdentifier)")
+            zmLog.safePublic("Can't find session to encrypt for client \(recipientIdentifier)")
             throw EncryptionSessionError.encryptionFailed.error
         }
         let cypherText = try session.encrypt(plainText)
@@ -530,7 +531,7 @@ extension EncryptionSessionsDirectory: Encryptor, Decryptor {
     public func decrypt(_ cypherText: Data, from senderIdentifier: EncryptionSessionIdentifier) throws -> Data {
         _ = self.validateContext()
         guard let session = self.clientSession(for: senderIdentifier) else {
-            zmLog.debug("Can't find session to decrypt for client \(senderIdentifier)")
+            zmLog.safePublic("Can't find session to decrypt for client \(senderIdentifier)")
             throw EncryptionSessionError.decryptionFailed.error
         }
         return try session.decrypt(cypherText)
@@ -545,7 +546,7 @@ extension EncryptionSession {
     fileprivate func decrypt(_ cypher: Data) throws -> Data {
         var vectorBacking : OpaquePointer? = nil
 
-        zmLog.debug("Decrypting with session \(self.id)")
+        zmLog.safePublic("Decrypting with session \(id)")
 
         let result = cypher.withUnsafeBytes { (cypherPointer: UnsafeRawBufferPointer) -> CBoxResult in
             cbox_decrypt(self.implementation.ptr,
@@ -565,7 +566,7 @@ extension EncryptionSession {
     fileprivate func encrypt(_ plainText: Data) throws -> Data {
         var vectorBacking : OpaquePointer? = nil
         
-        zmLog.debug("Encrypting with session \(self.id)")
+        zmLog.safePublic("Encrypting with session \(id)")
         let result = plainText.withUnsafeBytes { (plainTextPointer: UnsafeRawBufferPointer) -> CBoxResult in
             cbox_encrypt(self.implementation.ptr,
                          plainTextPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
@@ -619,10 +620,25 @@ extension EncryptionSessionsDirectory {
 // MARK: - Session identifier
 public struct EncryptionSessionIdentifier : Hashable, Equatable {
     
-    public let rawValue : String
+    private let userId: String
+    private let clientId: String
     
-    public init(rawValue: String) {
-        self.rawValue = rawValue
+    public var rawValue: String {
+        guard !userId.isEmpty else {
+            return clientId
+        }
+        return "\(userId)_\(clientId)"
+    }
+    
+    public init(userId: String, clientId: String) {
+        self.userId = userId
+        self.clientId = clientId
+    }
+    
+    /// Use when migrating from old session identifier to new session identifier
+    init(fromLegacyV1Identifier clientId: String) {
+        self.userId = String()
+        self.clientId = clientId
     }
     
     public var hashValue: Int {
@@ -638,3 +654,8 @@ public func ==(lhs: EncryptionSessionIdentifier, rhs: EncryptionSessionIdentifie
     return lhs.rawValue == rhs.rawValue
 }
 
+extension EncryptionSessionIdentifier: SafeForLoggingStringConvertible {
+    public var safeForLoggingDescription: String {
+        return "<\(userId.readableHash)>_<\(clientId.readableHash)>"
+    }
+}
