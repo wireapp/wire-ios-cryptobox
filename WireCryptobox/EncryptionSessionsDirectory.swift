@@ -84,6 +84,7 @@ public final class EncryptionSessionsDirectory : NSObject {
         self.localFingerprint = generatingContext.implementation.localFingerprint
         self.encryptionPayloadCache = encryptionPayloadCache
         super.init()
+        zmLog.safePublic("Loaded encryption status - local fingerprint \(localFingerprint)")
     }
     
     /// The underlying implementation of the box
@@ -215,8 +216,8 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         let context = self.validateContext()
 
         // check if pre-existing
-        if clientSession(for: identifier) != nil {
-            zmLog.safePublic("Tried to create session for client \(identifier) with prekey but session already existed")
+        if let session = clientSession(for: identifier) {
+            zmLog.safePublic("Tried to create session for client \(identifier) with prekey but session already existed - fingerprint \(session.remoteFingerprint)")
             return
         }
         
@@ -229,7 +230,6 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                           prekeyData.count,
                                           &cbsession.ptr)
         }
-        zmLog.safePublic("Create session for client \(identifier)")
         
         try result.throwIfError()
 
@@ -238,6 +238,8 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                         requiresSave: true,
                                         cryptoboxPath: self.generatingContext!.path)
         self.pendingSessionsCache[identifier] = session
+        
+        zmLog.safePublic("Created session for client \(identifier) - fingerprint \(session.remoteFingerprint)")
     }
     
     public func createClientSessionAndReturnPlaintext(for identifier: EncryptionSessionIdentifier, prekeyMessage: Data) throws -> Data {
@@ -253,7 +255,6 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                            &cbsession.ptr,
                                            &plainTextBacking)
         }
-        zmLog.safePublic("Create session for client \(identifier) from prekey message")
 
         try result.throwIfError()
 
@@ -263,6 +264,9 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                         requiresSave: true,
                                         cryptoboxPath: self.generatingContext!.path)
         self.pendingSessionsCache[identifier] = session
+
+        zmLog.safePublic("Created session for client \(identifier) from prekey message - fingerprint \(session.remoteFingerprint)")
+
         return plainText
     }
     
@@ -284,7 +288,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         
         // check cache
         if let transientSession = self.pendingSessionsCache[identifier] {
-            zmLog.safePublic("Tried to load session for client \(identifier), session was already loaded")
+            zmLog.safePublic("Tried to load session for client \(identifier), session was already loaded - fingerprint \(transientSession.remoteFingerprint)")
             return transientSession
         }
         
@@ -300,7 +304,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                             requiresSave: false,
                                             cryptoboxPath: self.generatingContext!.path)
             self.pendingSessionsCache[identifier] = session
-            zmLog.safePublic("Loaded session for client \(identifier)")
+            zmLog.safePublic("Loaded session for client \(identifier) - fingerprint \(session.remoteFingerprint)")
             return session
         default:
             fatalError("Error in loading from cbox: \(result)")
