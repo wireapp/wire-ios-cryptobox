@@ -123,11 +123,11 @@ public final class EncryptionSessionsDirectory : NSObject {
         let key = hash(for: plainText, recipient: recipientIdentifier)
         
         if let cachedObject = encryptionPayloadCache.value(for: key) {
-            zmLog.safePublic("Encrypting, cache hit: \(key)")
+            zmLog.safePublic("Encrypting, cache hit")
             return cachedObject
         }
         else {
-            zmLog.safePublic("Encrypting, cache miss: \(key)")
+            zmLog.debug("Encrypting, cache miss")
             let data = try encrypt(plainText, for: recipientIdentifier)
             let didPurgeData = encryptionPayloadCache.set(value: data, for: key, cost: data.count)
             
