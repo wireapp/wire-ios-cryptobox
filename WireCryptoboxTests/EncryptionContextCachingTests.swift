@@ -69,6 +69,10 @@ class EncryptionContextCachingTests: XCTestCase {
             try! sessionContext.createClientSession(hardcodedClientId, base64PreKeyString: hardcodedPrekey)
             
             let encryptedDataFirst  = try! sessionContext.encryptCaching(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+            for i in 0...49500 {
+                let someTextToEncryptI = "ENCRYPT THIS"+String(i)
+                _ = try! sessionContext.encryptCaching(someTextToEncryptI.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
+            }
             let encryptedDataSecond = try! sessionContext.encryptCaching(someTextToEncrypt.data(using: String.Encoding.utf8)!, for: hardcodedClientId)
             
             XCTAssertEqual(encryptedDataFirst, encryptedDataSecond)
