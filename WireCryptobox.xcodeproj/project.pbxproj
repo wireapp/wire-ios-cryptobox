@@ -477,11 +477,11 @@
 		BA7EF96D1B7109B600204A8E /* CryptoboxTests */ = {
 			isa = PBXGroup;
 			children = (
-				EEA2B85E24DC26BD00C6659E /* AES256GCMEncryptionTests.swift */,
 				BA7EF96E1B7109B600204A8E /* Supporting Files */,
 				54A1573E1D23C00500EB3B4F /* EncryptionContextTests.swift */,
 				87B43C2D20F396F60031DE41 /* EncryptionContextCachingTests.swift */,
 				16460B82206D47460096B616 /* ChaCha20EncryptionTests.swift */,
+				EEA2B85E24DC26BD00C6659E /* AES256GCMEncryptionTests.swift */,
 				54B949911D253E2E0041CC55 /* EncryptionSessionsDirectoryTests.swift */,
 				870121FB20F4D2F6001E6342 /* GenericHashBuilderTests.swift */,
 				54B949931D2541350041CC55 /* TestHelper.swift */,
