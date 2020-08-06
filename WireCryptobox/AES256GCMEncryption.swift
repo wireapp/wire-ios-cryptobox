@@ -22,6 +22,8 @@ import Foundation
 
 public enum AES256CGMEncryption {
 
+    // MARK: - Public Functions
+
     /// Encrypts a message with a key.
     ///
     /// - Parameters:
@@ -102,19 +104,29 @@ public enum AES256CGMEncryption {
         return Data(messageBytes)
     }
 
-    // MARK: - Helpers
+    enum EncryptionError: Error {
 
-    private static let keyLength = Int(crypto_aead_aes256gcm_KEYBYTES)
-    private static let nonceLength = Int(crypto_aead_aes256gcm_NPUBBYTES)
-    private static let authenticationBytesLength = Int(crypto_aead_aes256gcm_ABYTES)
+        case failureInitializingSodium
+        case implementationNotAvailable
+        case malformedKey
+        case malformedNonce
+        case malformedCipher
+        case failedToDecrypt
 
-    private static func cipherLength(forMessageLength messageLength: Int) -> Int {
-        return messageLength + authenticationBytesLength
     }
 
-    private static func messageLength(forCipherLength cipherLength: Int) -> Int {
-        return cipherLength - authenticationBytesLength
+    // MARK: - Private Helpers
+
+    private static func initializeSodium() throws {
+        guard sodium_init() >= 0 else { throw EncryptionError.failureInitializingSodium }
+        guard isImplementationAvailable else { throw EncryptionError.implementationNotAvailable }
     }
+
+    private static var isImplementationAvailable: Bool {
+        return crypto_aead_aes256gcm_is_available() != 0
+    }
+
+    // MARK: - Verification
 
     private static func verifyKey(bytes: [Byte]) throws {
         guard bytes.count == keyLength else { throw EncryptionError.malformedKey }
@@ -128,18 +140,22 @@ public enum AES256CGMEncryption {
         guard length >= UInt64(authenticationBytesLength) else { throw EncryptionError.malformedCipher }
     }
 
-    private static func createByteArray(length: Int) -> [Byte] {
-        return [Byte](repeating: 0, count: length)
+    // MARK: - Buffer Lengths
+
+    private static let keyLength = Int(crypto_aead_aes256gcm_KEYBYTES)
+    private static let nonceLength = Int(crypto_aead_aes256gcm_NPUBBYTES)
+    private static let authenticationBytesLength = Int(crypto_aead_aes256gcm_ABYTES)
+
+    private static func cipherLength(forMessageLength messageLength: Int) -> Int {
+        return messageLength + authenticationBytesLength
     }
 
-    private static func initializeSodium() throws {
-        guard sodium_init() >= 0 else { throw EncryptionError.failureInitializingSodium }
-        guard isImplementationAvailable else { throw EncryptionError.implementationNotAvailable }
+    private static func messageLength(forCipherLength cipherLength: Int) -> Int {
+        return cipherLength - authenticationBytesLength
     }
 
-    private static var isImplementationAvailable: Bool {
-        return crypto_aead_aes256gcm_is_available() != 0
-    }
+
+    // MARK: - Buffer creation
 
     static func generateRandomNonceBytes() -> [Byte] {
         var nonce = createByteArray(length: nonceLength)
@@ -147,15 +163,8 @@ public enum AES256CGMEncryption {
         return nonce
     }
 
-    enum EncryptionError: Error {
-
-        case failureInitializingSodium
-        case implementationNotAvailable
-        case malformedKey
-        case malformedNonce
-        case malformedCipher
-        case failedToDecrypt
-
+    private static func createByteArray(length: Int) -> [Byte] {
+        return [Byte](repeating: 0, count: length)
     }
 
 }
