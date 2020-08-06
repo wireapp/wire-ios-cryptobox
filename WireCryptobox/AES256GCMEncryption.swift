@@ -22,15 +22,84 @@ import Foundation
 
 public enum AES256CGMEncryption {
 
-    enum EncryptionError: Error {
+    /// Encrypts a message with a key.
+    ///
+    /// - Parameters:
+    ///  - message: The message data to encrypt.
+    ///  - key: The key used to encrypt.
+    ///
+    /// - Returns: The cipher and public nonce used in the encryption.
 
-        case failureInitializingSodium
-        case implementationNotAvailable
-        case malformedKey
-        case malformedNonce
-        case malformedCipher
-        case failedToDecrypt
+    static func encrypt(message: Data, key: Data) throws -> (cipher: Data, nonce: Data) {
+        try initializeSodium()
 
+        let keyBytes = key.bytes
+        try verifyKey(bytes: keyBytes)
+
+        let messageBytes = message.bytes
+        let messageLength = messageBytes.count
+
+        let nonceBytes = generateRandomNonceBytes()
+
+        var cipherBytes = createByteArray(length: cipherLength(forMessageLength: messageLength))
+        var actualCipherLength: UInt64 = 0
+
+        crypto_aead_aes256gcm_encrypt(
+            &cipherBytes,          // buffer in which enrypted data is written to
+            &actualCipherLength,   // actual size of encrypted data
+            messageBytes,          // message to encrypt
+            UInt64(messageLength), // length of message to encrypt
+            nil,                   // additional (non encrypted) data
+            0,                     // additional data length
+            nil,                   // nsec, not used by this function
+            nonceBytes,            // unique nonce used as initizalization vector
+            keyBytes               // key used to encrypt the message
+        )
+
+        try verifyCipher(length: actualCipherLength)
+
+        return (cipherBytes.data, nonceBytes.data)
+    }
+
+    /// Decrypts a cipher with a public nonce and a key.
+    ///
+    /// - Parameters:
+    ///  - cipher: The data to decrypt.
+    ///  - nonce: The public nonce used to encrypt the original message.
+    ///  - key: The key used to encrypt the original message.
+    ///
+    /// - Returns: The plaintext message data.
+
+    static func decrypt(cipher: Data, nonce: Data, key: Data) throws -> Data {
+        try initializeSodium()
+
+        let keyBytes = key.bytes
+        try verifyKey(bytes: keyBytes)
+
+        let nonceBytes = nonce.bytes
+        try verifyKey(bytes: nonceBytes)
+
+        let cipherBytes = cipher.bytes
+        let cipherLength = cipherBytes.count
+
+        var messageBytes = createByteArray(length: messageLength(forCipherLength: cipherLength))
+        var actualMessageLength: UInt64 = 0
+
+        let result = crypto_aead_aes256gcm_decrypt(
+            &messageBytes,          // buffer in which decrypted data is written to
+            &actualMessageLength,   // actual size of decrypted data
+            nil,                    // nsec, not used by this function
+            cipherBytes,            // cipher to decrypt
+            UInt64(cipherLength),   // length of cipher
+            nil,                    // additional (non encrypted) data
+            0,                      // additional data length
+            nonceBytes,             // the unique nonce used to encrypt the original message
+            keyBytes                // the key used to encrypt the original message
+        )
+
+        guard result == 0 else { throw EncryptionError.failedToDecrypt }
+
+        return Data(messageBytes)
     }
 
     // MARK: - Helpers
@@ -78,75 +147,15 @@ public enum AES256CGMEncryption {
         return nonce
     }
 
-    /// Encrypts a message with a key.
-    ///
-    /// - Parameters:
-    ///  - message: The message data to encrypt.
-    ///  - key: The key used to encrypt.
-    ///
-    /// - Returns: The cipher and public nonce used in the encryption.
+    enum EncryptionError: Error {
 
-    static func encrypt(message: Data, key: Data) throws -> (cipher: Data, nonce: Data) {
-        try initializeSodium()
+        case failureInitializingSodium
+        case implementationNotAvailable
+        case malformedKey
+        case malformedNonce
+        case malformedCipher
+        case failedToDecrypt
 
-        let keyBytes = key.bytes
-        try verifyKey(bytes: keyBytes)
-
-        let messageBytes = message.bytes
-        let messageLength = messageBytes.count
-
-        let nonceBytes = generateRandomNonceBytes()
-
-        var cipherBytes = createByteArray(length: cipherLength(forMessageLength: messageLength))
-        var actualCipherLength: UInt64 = 0
-
-        crypto_aead_aes256gcm_encrypt(
-            &cipherBytes,          // buffer in which enrypted data is written to
-            &actualCipherLength,   // actual size of encrypted data
-            messageBytes,          // message to encrypt
-            UInt64(messageLength), // length of message to encrypt
-            nil,                   // additional (non encrypted) data
-            0,                     // additional data length
-            nil,                   // nsec, not used by this function
-            nonceBytes,            // unique nonce used as initizalization vector
-            keyBytes               // key used to encrypt the message
-        )
-
-        try verifyCipher(length: actualCipherLength)
-
-        return (cipherBytes.data, nonceBytes.data)
-    }
-
-    static func decrypt(cipher: Data, nonce: Data, key: Data) throws -> Data {
-        try initializeSodium()
-
-        let keyBytes = key.bytes
-        try verifyKey(bytes: keyBytes)
-
-        let nonceBytes = nonce.bytes
-        try verifyKey(bytes: nonceBytes)
-
-        let cipherBytes = cipher.bytes
-        let cipherLength = cipherBytes.count
-
-        var messageBytes = createByteArray(length: messageLength(forCipherLength: cipherLength))
-        var actualMessageLength: UInt64 = 0
-
-        let result = crypto_aead_aes256gcm_decrypt(
-            &messageBytes,          // buffer in which decrypted data is written to
-            &actualMessageLength,   // actual size of decrypted data
-            nil,                    // nsec, not used by this function
-            cipherBytes,            // cipher to decrypt
-            UInt64(cipherLength),   // length of cipher
-            nil,                    // additional (non encrypted) data
-            0,                      // additional data length
-            nonceBytes,             // the unique nonce used to encrypt the original message
-            keyBytes                // the key used to encrypt the original message
-        )
-
-        guard result == 0 else { throw EncryptionError.failedToDecrypt }
-
-        return Data(messageBytes)
     }
 
 }
