@@ -79,7 +79,7 @@ public enum AES256GCMEncryption {
         try verifyKey(bytes: keyBytes)
 
         let nonceBytes = nonce.bytes
-        try verifyKey(bytes: nonceBytes)
+        try verifyNonce(bytes: nonceBytes)
 
         let cipherBytes = cipher.bytes
         let cipherLength = cipherBytes.count
