@@ -20,7 +20,7 @@ import Foundation
 
 /// See https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/aes-256-gcm
 
-public enum AES256CGMEncryption {
+public enum AES256GCMEncryption {
 
     // MARK: - Public Functions
 

@@ -23,7 +23,7 @@ class AES256GCMEncryptionTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private typealias Sut = AES256CGMEncryption
+    private typealias Sut = AES256GCMEncryption
 
     private func generateRandomCipher(length: UInt) -> Data {
         // Large enough to include authentication bytes in the cipher.
