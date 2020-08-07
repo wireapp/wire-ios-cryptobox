@@ -32,7 +32,7 @@ public enum AES256GCMEncryption {
     ///
     /// - Returns: The cipher and public nonce used in the encryption.
 
-    static func encrypt(message: Data, key: Data) throws -> (cipher: Data, nonce: Data) {
+    public static func encrypt(message: Data, key: Data) throws -> (cipher: Data, nonce: Data) {
         try initializeSodium()
 
         let keyBytes = key.bytes
@@ -72,7 +72,7 @@ public enum AES256GCMEncryption {
     ///
     /// - Returns: The plaintext message data.
 
-    static func decrypt(cipher: Data, nonce: Data, key: Data) throws -> Data {
+    public static func decrypt(cipher: Data, nonce: Data, key: Data) throws -> Data {
         try initializeSodium()
 
         let keyBytes = key.bytes
