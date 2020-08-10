@@ -27,8 +27,8 @@ class AES256GCMEncryptionTests: XCTestCase {
 
     private typealias Sut = AES256GCMEncryption
 
-    private func generateRandomCipher(length: UInt) -> Data {
-        // Large enough to include authentication bytes in the cipher.
+    private func generateRandomCiphertext(length: UInt) -> Data {
+        // Large enough to include authentication bytes in the ciphertext.
         return Data.secureRandomData(length: length + UInt(crypto_aead_aes256gcm_ABYTES))
     }
 
@@ -42,14 +42,14 @@ class AES256GCMEncryptionTests: XCTestCase {
         let key = Data.zmRandomSHA256Key()
 
         // When
-        let (cipher, nonce) = try Sut.encrypt(message: message, context: context, key: key)
+        let (ciphertext, nonce) = try Sut.encrypt(message: message, context: context, key: key)
 
         // Then
-        XCTAssertNotEqual(cipher, message)
+        XCTAssertNotEqual(ciphertext, message)
         XCTAssertFalse(nonce.isEmpty)
 
         // When
-        let decryptedMessage = try Sut.decrypt(cipher: cipher, nonce: nonce, context: context, key: key)
+        let decryptedMessage = try Sut.decrypt(ciphertext: ciphertext, nonce: nonce, context: context, key: key)
 
         // Then
         XCTAssertEqual(decryptedMessage, message)
@@ -74,13 +74,13 @@ class AES256GCMEncryptionTests: XCTestCase {
 
     func testThatItFailsToDecryptIfKeyIsMalformed() throws {
         // Given
-        let cipher = generateRandomCipher(length: 8)
+        let ciphertext = generateRandomCiphertext(length: 8)
         let nonce = Sut.generateRandomNonceBytes().data
         let keyOfWrongLength = Data.zmRandomSHA256Key().dropLast()
 
         do {
             // When
-            _ = try Sut.decrypt(cipher: cipher, nonce: nonce, context: context, key: keyOfWrongLength)
+            _ = try Sut.decrypt(ciphertext: ciphertext, nonce: nonce, context: context, key: keyOfWrongLength)
         } catch let error as Sut.EncryptionError {
             // Then
             XCTAssertEqual(error, .malformedKey)
@@ -91,13 +91,13 @@ class AES256GCMEncryptionTests: XCTestCase {
 
     func testThatItFailsToDecryptIfNonceIsMalformed() throws {
         // Given
-        let cipher = generateRandomCipher(length: 8)
+        let ciphertext = generateRandomCiphertext(length: 8)
         let nonceOfWrongLength = Sut.generateRandomNonceBytes().data.dropLast()
         let key = Data.zmRandomSHA256Key()
 
         do {
             // When
-            _ = try Sut.decrypt(cipher: cipher, nonce: nonceOfWrongLength, context: context, key: key)
+            _ = try Sut.decrypt(ciphertext: ciphertext, nonce: nonceOfWrongLength, context: context, key: key)
         } catch let error as Sut.EncryptionError {
             // Then
             XCTAssertEqual(error, .malformedNonce)
@@ -113,11 +113,11 @@ class AES256GCMEncryptionTests: XCTestCase {
         let key1 = Data.zmRandomSHA256Key()
         let key2 = Data.zmRandomSHA256Key()
 
-        let (cipher, nonce) = try Sut.encrypt(message: message, context: context, key: key1)
+        let (ciphertext, nonce) = try Sut.encrypt(message: message, context: context, key: key1)
 
         do {
             // When
-            _ = try Sut.decrypt(cipher: cipher, nonce: nonce, context: context, key: key2)
+            _ = try Sut.decrypt(ciphertext: ciphertext, nonce: nonce, context: context, key: key2)
         } catch let error as Sut.EncryptionError {
             // Then
             XCTAssertEqual(error, .failedToDecrypt)
@@ -132,11 +132,11 @@ class AES256GCMEncryptionTests: XCTestCase {
         let key = Data.zmRandomSHA256Key()
         let randomNonce = Sut.generateRandomNonceBytes().data
 
-        let (cipher, _) = try Sut.encrypt(message: message, context: context, key: key)
+        let (ciphertext, _) = try Sut.encrypt(message: message, context: context, key: key)
 
         do {
             // When
-            _ = try Sut.decrypt(cipher: cipher, nonce: randomNonce, context: context, key: key)
+            _ = try Sut.decrypt(ciphertext: ciphertext, nonce: randomNonce, context: context, key: key)
         } catch let error as Sut.EncryptionError {
             // Then
             XCTAssertEqual(error, .failedToDecrypt)
@@ -151,11 +151,11 @@ class AES256GCMEncryptionTests: XCTestCase {
         let key = Data.zmRandomSHA256Key()
         let randomNonce = Sut.generateRandomNonceBytes().data
 
-        let (cipher, _) = try Sut.encrypt(message: message, context: context, key: key)
+        let (ciphertext, _) = try Sut.encrypt(message: message, context: context, key: key)
 
         do {
             // When
-            _ = try Sut.decrypt(cipher: cipher, nonce: randomNonce, context: context.dropFirst(), key: key)
+            _ = try Sut.decrypt(ciphertext: ciphertext, nonce: randomNonce, context: context.dropFirst(), key: key)
         } catch let error as Sut.EncryptionError {
             // Then
             XCTAssertEqual(error, .failedToDecrypt)

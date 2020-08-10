@@ -31,9 +31,9 @@ public enum AES256GCMEncryption {
     ///  - context: Publicly known contextual data to be bound to the ciphertext.
     ///  - key: The key used to encrypt.
     ///
-    /// - Returns: The cipher and public nonce used in the encryption.
+    /// - Returns: The ciphertext and public nonce used in the encryption.
 
-    public static func encrypt(message: Data, context: Data, key: Data) throws -> (cipher: Data, nonce: Data) {
+    public static func encrypt(message: Data, context: Data, key: Data) throws -> (ciphertext: Data, nonce: Data) {
         try initializeSodium()
 
         let keyBytes = key.bytes
@@ -47,37 +47,37 @@ public enum AES256GCMEncryption {
 
         let nonceBytes = generateRandomNonceBytes()
 
-        var cipherBytes = createByteArray(length: cipherLength(forMessageLength: messageLength))
-        var actualCipherLength: UInt64 = 0
+        var ciphertextBytes = createByteArray(length: ciphertextLength(forMessageLength: messageLength))
+        var actualCiphertextLength: UInt64 = 0
 
         crypto_aead_aes256gcm_encrypt(
-            &cipherBytes,          // buffer in which enrypted data is written to
-            &actualCipherLength,   // actual size of encrypted data
-            messageBytes,          // message to encrypt
-            UInt64(messageLength), // length of message to encrypt
-            contextBytes,          // additional (non encrypted) data
-            UInt64(contextLength), // additional data length
-            nil,                   // nsec, not used by this function
-            nonceBytes,            // unique nonce used as initizalization vector
-            keyBytes               // key used to encrypt the message
+            &ciphertextBytes,          // buffer in which enrypted data is written to
+            &actualCiphertextLength,   // actual size of encrypted data
+            messageBytes,              // message to encrypt
+            UInt64(messageLength),     // length of message to encrypt
+            contextBytes,              // additional (non encrypted) data
+            UInt64(contextLength),     // additional data length
+            nil,                       // nsec, not used by this function
+            nonceBytes,                // unique nonce used as initizalization vector
+            keyBytes                   // key used to encrypt the message
         )
 
-        try verifyCipher(length: actualCipherLength)
+        try verifyCiphertext(length: actualCiphertextLength)
 
-        return (cipherBytes.data, nonceBytes.data)
+        return (ciphertextBytes.data, nonceBytes.data)
     }
 
-    /// Decrypts a cipher with a public nonce and a key.
+    /// Decrypts a ciphertext with a public nonce and a key.
     ///
     /// - Parameters:
-    ///  - cipher: The data to decrypt.
+    ///  - ciphertext: The data to decrypt.
     ///  - nonce: The public nonce used to encrypt the original message.
-    ///  - context: The public contextual data bound to the cipher.
+    ///  - context: The public contextual data bound to the ciphertext.
     ///  - key: The key used to encrypt the original message.
     ///
     /// - Returns: The plaintext message data.
 
-    public static func decrypt(cipher: Data, nonce: Data, context: Data, key: Data) throws -> Data {
+    public static func decrypt(ciphertext: Data, nonce: Data, context: Data, key: Data) throws -> Data {
         try initializeSodium()
 
         let keyBytes = key.bytes
@@ -86,25 +86,25 @@ public enum AES256GCMEncryption {
         let nonceBytes = nonce.bytes
         try verifyNonce(bytes: nonceBytes)
 
-        let cipherBytes = cipher.bytes
-        let cipherLength = cipherBytes.count
+        let ciphertextBytes = ciphertext.bytes
+        let ciphertextLength = ciphertextBytes.count
 
         let contextBytes = context.bytes
         let contextLength = contextBytes.count
 
-        var messageBytes = createByteArray(length: messageLength(forCipherLength: cipherLength))
+        var messageBytes = createByteArray(length: messageLength(forCiphertextLength: ciphertextLength))
         var actualMessageLength: UInt64 = 0
 
         let result = crypto_aead_aes256gcm_decrypt(
-            &messageBytes,         // buffer in which decrypted data is written to
-            &actualMessageLength,  // actual size of decrypted data
-            nil,                   // nsec, not used by this function
-            cipherBytes,           // cipher to decrypt
-            UInt64(cipherLength),  // length of cipher
-            contextBytes,          // additional (non encrypted) data
-            UInt64(contextLength), // additional data length
-            nonceBytes,            // the unique nonce used to encrypt the original message
-            keyBytes               // the key used to encrypt the original message
+            &messageBytes,             // buffer in which decrypted data is written to
+            &actualMessageLength,      // actual size of decrypted data
+            nil,                       // nsec, not used by this function
+            ciphertextBytes,           // ciphertext to decrypt
+            UInt64(ciphertextLength),  // length of ciphertext
+            contextBytes,              // additional (non encrypted) data
+            UInt64(contextLength),     // additional data length
+            nonceBytes,                // the unique nonce used to encrypt the original message
+            keyBytes                   // the key used to encrypt the original message
         )
 
         guard result == 0 else { throw EncryptionError.failedToDecrypt }
@@ -161,7 +161,7 @@ public enum AES256GCMEncryption {
         guard bytes.count == nonceLength else { throw EncryptionError.malformedNonce }
     }
 
-    private static func verifyCipher(length: UInt64) throws {
+    private static func verifyCiphertext(length: UInt64) throws {
         guard length >= UInt64(authenticationBytesLength) else { throw EncryptionError.malformedCiphertext }
     }
 
@@ -171,12 +171,12 @@ public enum AES256GCMEncryption {
     private static let nonceLength = Int(crypto_aead_aes256gcm_NPUBBYTES)
     private static let authenticationBytesLength = Int(crypto_aead_aes256gcm_ABYTES)
 
-    private static func cipherLength(forMessageLength messageLength: Int) -> Int {
+    private static func ciphertextLength(forMessageLength messageLength: Int) -> Int {
         return messageLength + authenticationBytesLength
     }
 
-    private static func messageLength(forCipherLength cipherLength: Int) -> Int {
-        return cipherLength - authenticationBytesLength
+    private static func messageLength(forCiphertextLength ciphertextLength: Int) -> Int {
+        return ciphertextLength - authenticationBytesLength
     }
 
 
