@@ -40,29 +40,29 @@ public enum AES256GCMEncryption {
         try verifyKey(bytes: keyBytes)
 
         let messageBytes = message.bytes
-        let messageLength = messageBytes.count
+        let messageLength = UInt64(messageBytes.count)
 
         let contextBytes = context.bytes
-        let contextLength = contextBytes.count
+        let contextLength = UInt64(contextBytes.count)
 
         let nonceBytes = generateRandomNonceBytes()
 
-        var ciphertextBytes = createByteArray(length: ciphertextLength(forMessageLength: messageLength))
+        var ciphertextBytes = createByteArray(length: ciphertextLength(forMessageLength: Int(messageLength)))
         var actualCiphertextLength: UInt64 = 0
 
         crypto_aead_aes256gcm_encrypt(
             &ciphertextBytes,          // buffer in which enrypted data is written to
             &actualCiphertextLength,   // actual size of encrypted data
             messageBytes,              // message to encrypt
-            UInt64(messageLength),     // length of message to encrypt
+            messageLength,             // length of message to encrypt
             contextBytes,              // additional (non encrypted) data
-            UInt64(contextLength),     // additional data length
+            contextLength,             // additional data length
             nil,                       // nsec, not used by this function
             nonceBytes,                // unique nonce used as initizalization vector
             keyBytes                   // key used to encrypt the message
         )
 
-        try verifyCiphertext(length: actualCiphertextLength)
+        try verifyCiphertext(length: actualCiphertextLength, messageLength: messageLength)
 
         return (ciphertextBytes.data, nonceBytes.data)
     }
@@ -87,24 +87,24 @@ public enum AES256GCMEncryption {
         try verifyNonce(bytes: nonceBytes)
 
         let ciphertextBytes = ciphertext.bytes
-        let ciphertextLength = ciphertextBytes.count
+        let ciphertextLength = UInt64(ciphertextBytes.count)
 
         let contextBytes = context.bytes
-        let contextLength = contextBytes.count
+        let contextLength = UInt64(contextBytes.count)
 
-        var messageBytes = createByteArray(length: messageLength(forCiphertextLength: ciphertextLength))
+        var messageBytes = createByteArray(length: messageLength(forCiphertextLength: Int(ciphertextLength)))
         var actualMessageLength: UInt64 = 0
 
         let result = crypto_aead_aes256gcm_decrypt(
-            &messageBytes,             // buffer in which decrypted data is written to
-            &actualMessageLength,      // actual size of decrypted data
-            nil,                       // nsec, not used by this function
-            ciphertextBytes,           // ciphertext to decrypt
-            UInt64(ciphertextLength),  // length of ciphertext
-            contextBytes,              // additional (non encrypted) data
-            UInt64(contextLength),     // additional data length
-            nonceBytes,                // the unique nonce used to encrypt the original message
-            keyBytes                   // the key used to encrypt the original message
+            &messageBytes,              // buffer in which decrypted data is written to
+            &actualMessageLength,       // actual size of decrypted data
+            nil,                        // nsec, not used by this function
+            ciphertextBytes,            // ciphertext to decrypt
+            ciphertextLength,           // length of ciphertext
+            contextBytes,               // additional (non encrypted) data
+            contextLength,              // additional data length
+            nonceBytes,                 // the unique nonce used to encrypt the original message
+            keyBytes                    // the key used to encrypt the original message
         )
 
         guard result == 0 else { throw EncryptionError.failedToDecrypt }
@@ -161,8 +161,10 @@ public enum AES256GCMEncryption {
         guard bytes.count == nonceLength else { throw EncryptionError.malformedNonce }
     }
 
-    private static func verifyCiphertext(length: UInt64) throws {
-        guard length >= UInt64(authenticationBytesLength) else { throw EncryptionError.malformedCiphertext }
+    private static func verifyCiphertext(length: UInt64, messageLength: UInt64) throws {
+        guard length == messageLength + UInt64(authenticationBytesLength) else {
+            throw EncryptionError.malformedCiphertext
+        }
     }
 
     // MARK: - Buffer Lengths

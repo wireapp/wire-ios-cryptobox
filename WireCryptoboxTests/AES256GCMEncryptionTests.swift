@@ -32,8 +32,6 @@ class AES256GCMEncryptionTests: XCTestCase {
         return Data.secureRandomData(length: length + UInt(crypto_aead_aes256gcm_ABYTES))
     }
 
-    // Test for context.
-
     // MARK: - Positive Tests
 
     func testThatItEncryptsAndDecryptsMessage() throws {
