@@ -22,6 +22,14 @@ import Foundation
 
 public enum AES256GCMEncryption {
 
+    // MARK: - Public Properties
+
+    /// Whether the device hardware supports this encryption algorithm.
+
+    public static var isImplementationAvailable: Bool {
+        return crypto_aead_aes256gcm_is_available() != 0
+    }
+
     // MARK: - Public Functions
 
     /// Encrypts a message with a key.
@@ -145,10 +153,6 @@ public enum AES256GCMEncryption {
     private static func initializeSodium() throws {
         guard sodium_init() >= 0 else { throw EncryptionError.failedToInitializeSodium }
         guard isImplementationAvailable else { throw EncryptionError.implementationNotAvailable }
-    }
-
-    private static var isImplementationAvailable: Bool {
-        return crypto_aead_aes256gcm_is_available() != 0
     }
 
     // MARK: - Verification
