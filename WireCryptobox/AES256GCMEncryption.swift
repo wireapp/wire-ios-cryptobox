@@ -110,7 +110,7 @@ public enum AES256GCMEncryption {
         case implementationNotAvailable
         case malformedKey
         case malformedNonce
-        case malformedCipher
+        case malformedCiphertext
         case failedToDecrypt
 
         var errorDescription: String? {
@@ -123,8 +123,8 @@ public enum AES256GCMEncryption {
                 return "Encountered a malformed key."
             case .malformedNonce:
                 return "Encountered a malformed nonce."
-            case .malformedCipher:
-                return "Encountered a malformed cipher."
+            case .malformedCiphertext:
+                return "Encountered a malformed ciphertext."
             case .failedToDecrypt:
                 return "Failed to decrypt."
             }
@@ -154,7 +154,7 @@ public enum AES256GCMEncryption {
     }
 
     private static func verifyCipher(length: UInt64) throws {
-        guard length >= UInt64(authenticationBytesLength) else { throw EncryptionError.malformedCipher }
+        guard length >= UInt64(authenticationBytesLength) else { throw EncryptionError.malformedCiphertext }
     }
 
     // MARK: - Buffer Lengths
