@@ -104,21 +104,38 @@ public enum AES256GCMEncryption {
         return Data(messageBytes)
     }
 
-    enum EncryptionError: Error {
+    enum EncryptionError: LocalizedError {
 
-        case failureInitializingSodium
+        case failedToInitializeSodium
         case implementationNotAvailable
         case malformedKey
         case malformedNonce
         case malformedCipher
         case failedToDecrypt
 
+        var errorDescription: String? {
+            switch self {
+            case .failedToInitializeSodium:
+                return "Failed to initialize sodium."
+            case .implementationNotAvailable:
+                return "AES256GCM implementation not available on this device."
+            case .malformedKey:
+                return "Encountered a malformed key."
+            case .malformedNonce:
+                return "Encountered a malformed nonce."
+            case .malformedCipher:
+                return "Encountered a malformed cipher."
+            case .failedToDecrypt:
+                return "Failed to decrypt."
+            }
+        }
+
     }
 
     // MARK: - Private Helpers
 
     private static func initializeSodium() throws {
-        guard sodium_init() >= 0 else { throw EncryptionError.failureInitializingSodium }
+        guard sodium_init() >= 0 else { throw EncryptionError.failedToInitializeSodium }
         guard isImplementationAvailable else { throw EncryptionError.implementationNotAvailable }
     }
 
