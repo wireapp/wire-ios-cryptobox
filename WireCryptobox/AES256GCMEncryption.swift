@@ -28,11 +28,12 @@ public enum AES256GCMEncryption {
     ///
     /// - Parameters:
     ///  - message: The message data to encrypt.
+    ///  - context: Publicly known contextual data to be bound to the ciphertext.
     ///  - key: The key used to encrypt.
     ///
     /// - Returns: The cipher and public nonce used in the encryption.
 
-    public static func encrypt(message: Data, key: Data) throws -> (cipher: Data, nonce: Data) {
+    public static func encrypt(message: Data, context: Data, key: Data) throws -> (cipher: Data, nonce: Data) {
         try initializeSodium()
 
         let keyBytes = key.bytes
@@ -40,6 +41,9 @@ public enum AES256GCMEncryption {
 
         let messageBytes = message.bytes
         let messageLength = messageBytes.count
+
+        let contextBytes = context.bytes
+        let contextLength = contextBytes.count
 
         let nonceBytes = generateRandomNonceBytes()
 
@@ -51,8 +55,8 @@ public enum AES256GCMEncryption {
             &actualCipherLength,   // actual size of encrypted data
             messageBytes,          // message to encrypt
             UInt64(messageLength), // length of message to encrypt
-            nil,                   // additional (non encrypted) data
-            0,                     // additional data length
+            contextBytes,          // additional (non encrypted) data
+            UInt64(contextLength), // additional data length
             nil,                   // nsec, not used by this function
             nonceBytes,            // unique nonce used as initizalization vector
             keyBytes               // key used to encrypt the message
@@ -68,11 +72,12 @@ public enum AES256GCMEncryption {
     /// - Parameters:
     ///  - cipher: The data to decrypt.
     ///  - nonce: The public nonce used to encrypt the original message.
+    ///  - context: The public contextual data bound to the cipher.
     ///  - key: The key used to encrypt the original message.
     ///
     /// - Returns: The plaintext message data.
 
-    public static func decrypt(cipher: Data, nonce: Data, key: Data) throws -> Data {
+    public static func decrypt(cipher: Data, nonce: Data, context: Data, key: Data) throws -> Data {
         try initializeSodium()
 
         let keyBytes = key.bytes
@@ -84,19 +89,22 @@ public enum AES256GCMEncryption {
         let cipherBytes = cipher.bytes
         let cipherLength = cipherBytes.count
 
+        let contextBytes = context.bytes
+        let contextLength = contextBytes.count
+
         var messageBytes = createByteArray(length: messageLength(forCipherLength: cipherLength))
         var actualMessageLength: UInt64 = 0
 
         let result = crypto_aead_aes256gcm_decrypt(
-            &messageBytes,          // buffer in which decrypted data is written to
-            &actualMessageLength,   // actual size of decrypted data
-            nil,                    // nsec, not used by this function
-            cipherBytes,            // cipher to decrypt
-            UInt64(cipherLength),   // length of cipher
-            nil,                    // additional (non encrypted) data
-            0,                      // additional data length
-            nonceBytes,             // the unique nonce used to encrypt the original message
-            keyBytes                // the key used to encrypt the original message
+            &messageBytes,         // buffer in which decrypted data is written to
+            &actualMessageLength,  // actual size of decrypted data
+            nil,                   // nsec, not used by this function
+            cipherBytes,           // cipher to decrypt
+            UInt64(cipherLength),  // length of cipher
+            contextBytes,          // additional (non encrypted) data
+            UInt64(contextLength), // additional data length
+            nonceBytes,            // the unique nonce used to encrypt the original message
+            keyBytes               // the key used to encrypt the original message
         )
 
         guard result == 0 else { throw EncryptionError.failedToDecrypt }
