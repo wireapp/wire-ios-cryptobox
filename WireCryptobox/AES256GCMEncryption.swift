@@ -120,7 +120,7 @@ public enum AES256GCMEncryption {
         return Data(messageBytes)
     }
 
-    enum EncryptionError: LocalizedError {
+    public enum EncryptionError: LocalizedError {
 
         case failedToInitializeSodium
         case implementationNotAvailable
@@ -129,7 +129,7 @@ public enum AES256GCMEncryption {
         case malformedCiphertext
         case failedToDecrypt
 
-        var errorDescription: String? {
+        public var errorDescription: String? {
             switch self {
             case .failedToInitializeSodium:
                 return "Failed to initialize sodium."
