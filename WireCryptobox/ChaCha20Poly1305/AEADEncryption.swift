@@ -18,7 +18,7 @@
 
 import Foundation
 
-public extension ChaCha20 {
+public extension ChaCha20Poly1305 {
 
     /// AEAD Encryption wrapper for IETF ChaCha20-Poly1305 construction.
     /// 

@@ -18,4 +18,4 @@
 
 import Foundation
 
-public enum ChaCha20 { }
+public enum ChaCha20Poly1305 { }

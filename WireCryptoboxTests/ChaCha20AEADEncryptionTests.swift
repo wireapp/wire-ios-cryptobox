@@ -25,7 +25,7 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private typealias Sut = ChaCha20.AEADEncryption
+    private typealias Sut = ChaCha20Poly1305.AEADEncryption
 
     private func generateRandomCiphertext(length: UInt) -> Data {
         // Large enough to include authentication bytes in the ciphertext.

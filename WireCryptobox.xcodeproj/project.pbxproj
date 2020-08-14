@@ -101,7 +101,7 @@
 		EEA2B85D24DAD1E700C6659E /* AEADEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */; };
 		EEA2B85F24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */; };
 		EEA2B86124DC3F1600C6659E /* Byte.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B86024DC3F1600C6659E /* Byte.swift */; };
-		EEF6714324E681DE00BDB9B9 /* ChaCha20.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF6714224E681DE00BDB9B9 /* ChaCha20.swift */; };
+		EEF6714324E681DE00BDB9B9 /* ChaCha20Poly1305.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF6714224E681DE00BDB9B9 /* ChaCha20Poly1305.swift */; };
 		F503032B1B8CFA2C0053E406 /* libcryptobox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F50303291B8CFA2C0053E406 /* libcryptobox.a */; };
 		F503032C1B8CFA2C0053E406 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F503032A1B8CFA2C0053E406 /* libsodium.a */; };
 /* End PBXBuildFile section */
@@ -252,7 +252,7 @@
 		EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AEADEncryption.swift; sourceTree = "<group>"; };
 		EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20AEADEncryptionTests.swift; sourceTree = "<group>"; };
 		EEA2B86024DC3F1600C6659E /* Byte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Byte.swift; sourceTree = "<group>"; };
-		EEF6714224E681DE00BDB9B9 /* ChaCha20.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20.swift; sourceTree = "<group>"; };
+		EEF6714224E681DE00BDB9B9 /* ChaCha20Poly1305.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20Poly1305.swift; sourceTree = "<group>"; };
 		EFF7A46D2271DBB100F1AC33 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		EFF7A46E2271DBB100F1AC33 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
@@ -467,7 +467,7 @@
 				5471A6731D242D740092A9A9 /* PointerWrapper.swift */,
 				54060B7C1DB771B400AEA9BB /* Logs.swift */,
 				54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */,
-				EEF6714424E682EA00BDB9B9 /* ChaCha20 */,
+				EEF6714424E682EA00BDB9B9 /* ChaCha20Poly1305 */,
 				EEA2B86024DC3F1600C6659E /* Byte.swift */,
 				87B43C5820F4AAA00031DE41 /* GenericHash.swift */,
 				0928E36F1BA090A00057232E /* Supporting Files */,
@@ -508,14 +508,14 @@
 			name = Libraries;
 			sourceTree = "<group>";
 		};
-		EEF6714424E682EA00BDB9B9 /* ChaCha20 */ = {
+		EEF6714424E682EA00BDB9B9 /* ChaCha20Poly1305 */ = {
 			isa = PBXGroup;
 			children = (
-				EEF6714224E681DE00BDB9B9 /* ChaCha20.swift */,
+				EEF6714224E681DE00BDB9B9 /* ChaCha20Poly1305.swift */,
 				16460B80206D46CA0096B616 /* StreamEncryption.swift */,
 				EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */,
 			);
-			path = ChaCha20;
+			path = ChaCha20Poly1305;
 			sourceTree = "<group>";
 		};
 		F10C8E221E9296BA00020408 /* Frameworks */ = {
@@ -782,7 +782,7 @@
 				EEA2B85D24DAD1E700C6659E /* AEADEncryption.swift in Sources */,
 				16460B81206D46CA0096B616 /* StreamEncryption.swift in Sources */,
 				638792A623956F9300FD23CF /* Data+SafeForLogging.swift in Sources */,
-				EEF6714324E681DE00BDB9B9 /* ChaCha20.swift in Sources */,
+				EEF6714324E681DE00BDB9B9 /* ChaCha20Poly1305.swift in Sources */,
 				5421C5F91D2C152C00048251 /* NSData+CBox.swift in Sources */,
 				54EA12241D2A9AA400D2CFD1 /* CryptoBoxError.swift in Sources */,
 				5471A6741D242D740092A9A9 /* PointerWrapper.swift in Sources */,

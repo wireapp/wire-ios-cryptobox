@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireCryptobox
 
-private typealias Sut = ChaCha20.StreamEncryption
+private typealias Sut = ChaCha20Poly1305.StreamEncryption
 
 class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
 
