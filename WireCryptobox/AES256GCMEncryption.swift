@@ -18,17 +18,9 @@
 
 import Foundation
 
-/// See https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/aes-256-gcm
+/// See https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction
 
-public enum AES256GCMEncryption {
-
-    // MARK: - Public Properties
-
-    /// Whether the device hardware supports this encryption algorithm.
-
-    public static var isImplementationAvailable: Bool {
-        return crypto_aead_aes256gcm_is_available() != 0
-    }
+public enum AEADEncryption {
 
     // MARK: - Public Functions
 
@@ -58,7 +50,7 @@ public enum AES256GCMEncryption {
         var ciphertextBytes = createByteArray(length: ciphertextLength(forMessageLength: Int(messageLength)))
         var actualCiphertextLength: UInt64 = 0
 
-        crypto_aead_aes256gcm_encrypt(
+        crypto_aead_xchacha20poly1305_ietf_encrypt(
             &ciphertextBytes,          // buffer in which enrypted data is written to
             &actualCiphertextLength,   // actual size of encrypted data
             messageBytes,              // message to encrypt
@@ -103,7 +95,7 @@ public enum AES256GCMEncryption {
         var messageBytes = createByteArray(length: messageLength(forCiphertextLength: Int(ciphertextLength)))
         var actualMessageLength: UInt64 = 0
 
-        let result = crypto_aead_aes256gcm_decrypt(
+        let result = crypto_aead_xchacha20poly1305_ietf_decrypt(
             &messageBytes,              // buffer in which decrypted data is written to
             &actualMessageLength,       // actual size of decrypted data
             nil,                        // nsec, not used by this function
@@ -152,7 +144,6 @@ public enum AES256GCMEncryption {
 
     private static func initializeSodium() throws {
         guard sodium_init() >= 0 else { throw EncryptionError.failedToInitializeSodium }
-        guard isImplementationAvailable else { throw EncryptionError.implementationNotAvailable }
     }
 
     // MARK: - Verification
@@ -173,9 +164,9 @@ public enum AES256GCMEncryption {
 
     // MARK: - Buffer Lengths
 
-    private static let keyLength = Int(crypto_aead_aes256gcm_KEYBYTES)
-    private static let nonceLength = Int(crypto_aead_aes256gcm_NPUBBYTES)
-    private static let authenticationBytesLength = Int(crypto_aead_aes256gcm_ABYTES)
+    private static let keyLength = Int(crypto_aead_xchacha20poly1305_ietf_KEYBYTES)
+    private static let nonceLength = Int(crypto_aead_xchacha20poly1305_ietf_NPUBBYTES)
+    private static let authenticationBytesLength = Int(crypto_aead_xchacha20poly1305_ietf_ABYTES)
 
     private static func ciphertextLength(forMessageLength messageLength: Int) -> Int {
         return messageLength + authenticationBytesLength
