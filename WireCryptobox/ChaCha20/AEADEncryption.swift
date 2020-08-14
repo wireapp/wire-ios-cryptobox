@@ -20,9 +20,9 @@ import Foundation
 
 public extension ChaCha20 {
 
-    /// AEAD Encryption wrapper for ChaCha20.
+    /// AEAD Encryption wrapper for IETF ChaCha20-Poly1305 construction.
     /// 
-    /// See https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction
+    /// See https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/ietf_chacha20-poly1305_construction
 
     enum AEADEncryption {
 
@@ -54,7 +54,7 @@ public extension ChaCha20 {
             var ciphertextBytes = createByteArray(length: ciphertextLength(forMessageLength: Int(messageLength)))
             var actualCiphertextLength: UInt64 = 0
 
-            crypto_aead_xchacha20poly1305_ietf_encrypt(
+            crypto_aead_chacha20poly1305_ietf_encrypt(
                 &ciphertextBytes,          // buffer in which enrypted data is written to
                 &actualCiphertextLength,   // actual size of encrypted data
                 messageBytes,              // message to encrypt
@@ -99,7 +99,7 @@ public extension ChaCha20 {
             var messageBytes = createByteArray(length: messageLength(forCiphertextLength: Int(ciphertextLength)))
             var actualMessageLength: UInt64 = 0
 
-            let result = crypto_aead_xchacha20poly1305_ietf_decrypt(
+            let result = crypto_aead_chacha20poly1305_ietf_decrypt(
                 &messageBytes,              // buffer in which decrypted data is written to
                 &actualMessageLength,       // actual size of decrypted data
                 nil,                        // nsec, not used by this function
@@ -165,9 +165,9 @@ public extension ChaCha20 {
 
         // MARK: - Buffer Lengths
 
-        private static let keyLength = Int(crypto_aead_xchacha20poly1305_ietf_KEYBYTES)
-        private static let nonceLength = Int(crypto_aead_xchacha20poly1305_ietf_NPUBBYTES)
-        private static let authenticationBytesLength = Int(crypto_aead_xchacha20poly1305_ietf_ABYTES)
+        private static let keyLength = Int(crypto_aead_chacha20poly1305_IETF_KEYBYTES)
+        private static let nonceLength = Int(crypto_aead_chacha20poly1305_IETF_NPUBBYTES)
+        private static let authenticationBytesLength = Int(crypto_aead_chacha20poly1305_IETF_ABYTES)
 
         private static func ciphertextLength(forMessageLength messageLength: Int) -> Int {
             return messageLength + authenticationBytesLength
