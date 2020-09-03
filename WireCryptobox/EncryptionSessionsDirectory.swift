@@ -112,6 +112,10 @@ public final class EncryptionSessionsDirectory : NSObject {
         self.commitCache()
     }
     
+    /// Enables or disables extended logging for any message encrypted from or to
+    /// a specific session.
+    /// note: if the session is already cached in memory, this will apply from the
+    /// next time the session is reloaded
     func setExtendedLogging(identifier: EncryptionSessionIdentifier, enabled: Bool) {
         if (enabled) {
             self.extensiveLoggingSessions.insert(identifier)
@@ -273,14 +277,20 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                            &plainTextBacking)
         }
 
+        let extensiveLogging = self.extensiveLoggingSessions.contains(identifier)
+        if (extensiveLogging) {
+            zmLog.safePublic(
+                "Extensive logging: decrypting prekey cyphertext: session \(identifier): result \(result): \(prekeyMessage)", level: .public
+            )
+        }
         try result.throwIfError()
-
+        
         let plainText = Data.moveFromCBoxVector(plainTextBacking)!
         let session = EncryptionSession(id: identifier,
                                         session: cbsession,
                                         requiresSave: true,
                                         cryptoboxPath: self.generatingContext!.path,
-                                        extensiveLogging: self.extensiveLoggingSessions.contains(identifier))
+                                        extensiveLogging: extensiveLogging)
         self.pendingSessionsCache[identifier] = session
 
         zmLog.safePublic("Created session for client \(identifier) from prekey message - fingerprint \(session.remoteFingerprint)")
@@ -588,10 +598,10 @@ extension EncryptionSession {
             let encodedData = HexDumpUnsafeLoggingData(data: cypher)
             if (self.extensiveLogging) {
                 zmLog.safePublic(
-                    "Extensive logging: decrypting cryphertext: result \(result): \(encodedData)"
+                    "Extensive logging: decrypting cyphertext: session \(id): result \(result): \(encodedData)", level: .public
                 )
             } else {
-                zmLog.safePublic("Failed to decrypt cyphertext: \(encodedData)")
+                zmLog.safePublic("Failed to decrypt cyphertext: session \(id): \(encodedData)", level: .public)
             }
         }
         
@@ -621,7 +631,7 @@ extension EncryptionSession {
         
         if (self.extensiveLogging) {
             let encodedData = HexDumpUnsafeLoggingData(data: data)
-            zmLog.safePublic("Extensive logging: encrypted to cryphertext: \(encodedData)")
+            zmLog.safePublic("Extensive logging: encrypted to cyphertext: session \(id): \(encodedData)", level: .public)
         }
         return data
     }
