@@ -57,6 +57,9 @@ public final class EncryptionSessionsDirectory : NSObject {
     /// will not try to validate with the generating context
     var debug_disableContextValidityCheck = false
     
+    /// Set of session identifier that require full debugging logs
+    private var extensiveLoggingSessions = Set<EncryptionSessionIdentifier>()
+    
     /// Context that created this status
     fileprivate weak var generatingContext: EncryptionContext!
     
@@ -107,6 +110,14 @@ public final class EncryptionSessionsDirectory : NSObject {
     
     deinit {
         self.commitCache()
+    }
+    
+    func setExtendedLogging(identifier: EncryptionSessionIdentifier, enabled: Bool) {
+        if (enabled) {
+            self.extensiveLoggingSessions.insert(identifier)
+        } else {
+            self.extensiveLoggingSessions.remove(identifier)
+        }
     }
     
     private func hash(for data: Data, recipient: EncryptionSessionIdentifier) -> GenericHash {
@@ -241,7 +252,8 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         let session = EncryptionSession(id: identifier,
                                         session: cbsession,
                                         requiresSave: true,
-                                        cryptoboxPath: self.generatingContext!.path)
+                                        cryptoboxPath: self.generatingContext!.path,
+                                        extensiveLogging: self.extensiveLoggingSessions.contains(identifier))
         self.pendingSessionsCache[identifier] = session
         
         zmLog.safePublic("Created session for client \(identifier) - fingerprint \(session.remoteFingerprint)")
@@ -267,7 +279,8 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         let session = EncryptionSession(id: identifier,
                                         session: cbsession,
                                         requiresSave: true,
-                                        cryptoboxPath: self.generatingContext!.path)
+                                        cryptoboxPath: self.generatingContext!.path,
+                                        extensiveLogging: self.extensiveLoggingSessions.contains(identifier))
         self.pendingSessionsCache[identifier] = session
 
         zmLog.safePublic("Created session for client \(identifier) from prekey message - fingerprint \(session.remoteFingerprint)")
@@ -307,7 +320,8 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
             let session = EncryptionSession(id: identifier,
                                             session: cbsession,
                                             requiresSave: false,
-                                            cryptoboxPath: self.generatingContext!.path)
+                                            cryptoboxPath: self.generatingContext!.path,
+                                            extensiveLogging: self.extensiveLoggingSessions.contains(identifier))
             self.pendingSessionsCache[identifier] = session
             zmLog.safePublic("Loaded session for client \(identifier) - fingerprint \(session.remoteFingerprint)")
             return session
@@ -468,19 +482,24 @@ class EncryptionSession {
     /// Path of the containing cryptobox (used for debugging)
     let cryptoboxPath : URL
     
+    /// Whether to log additional information
+    let extensiveLogging: Bool
+    
     /// Creates a session from a C-level session pointer
     /// - parameter id: id of the client
     /// - parameter requiresSave: if true, mark this session as having pending changes to save
     init(id: EncryptionSessionIdentifier,
          session: _CBoxSession,
          requiresSave: Bool,
-         cryptoboxPath: URL
+         cryptoboxPath: URL,
+         extensiveLogging: Bool
         ) {
         self.id = id
         self.implementation = session
         self.remoteFingerprint = session.remoteFingerprint
         self.hasChanges = requiresSave
         self.cryptoboxPath = cryptoboxPath
+        self.extensiveLogging = extensiveLogging
     }
     
     /// Closes the session in CBox
@@ -564,9 +583,16 @@ extension EncryptionSession {
                          &vectorBacking)
         }
         
-        if (result != CBOX_DUPLICATE_MESSAGE && result != CBOX_SUCCESS) {
+        let resultRequiresLogging = result != CBOX_DUPLICATE_MESSAGE && result != CBOX_SUCCESS
+        if (resultRequiresLogging || self.extensiveLogging) {
             let encodedData = HexDumpUnsafeLoggingData(data: cypher)
-            zmLog.safePublic("Failed to decrypt cyphertext: \(encodedData)")
+            if (self.extensiveLogging) {
+                zmLog.safePublic(
+                    "Extensive logging: decrypting cryphertext: result \(result): \(encodedData)"
+                )
+            } else {
+                zmLog.safePublic("Failed to decrypt cyphertext: \(encodedData)")
+            }
         }
         
         try result.throwIfError()
@@ -587,11 +613,17 @@ extension EncryptionSession {
                          plainText.count,
                          &vectorBacking)
         }
-        
+                
         try result.throwIfError()
 
         self.hasChanges = true
-        return Data.moveFromCBoxVector(vectorBacking)!
+        let data = Data.moveFromCBoxVector(vectorBacking)!
+        
+        if (self.extensiveLogging) {
+            let encodedData = HexDumpUnsafeLoggingData(data: data)
+            zmLog.safePublic("Extensive logging: encrypted to cryphertext: \(encodedData)")
+        }
+        return data
     }
 }
 
