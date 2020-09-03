@@ -600,12 +600,30 @@ extension EncryptionSessionsDirectoryTests {
         statusAlice.setExtendedLogging(identifier: wrongIdentifier, enabled: true)
         
         let plainText = "foo".data(using: String.Encoding.utf8)!
-        do {
-            try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(2))
-        } catch {
-            XCTFail()
-            return
+        establishSessionFromAliceToBob()
+        
+        // EXPECT
+        let token = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
+            XCTFail("Should not have logged")
         }
+        
+        // WHEN
+        _ = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
+        
+        // AFTER
+        ZMSLog.removeLogHook(token: token)
+    }
+    
+    func testThatItDoesNotLogEncryptionWhenRemovingExtendedEncryption() {
+        
+        // GIVEN
+        statusAlice.setExtendedLogging(identifier: Person.Bob.identifier, enabled: true)
+        // disable
+        statusAlice.setExtendedLogging(identifier: Person.Bob.identifier, enabled: false)
+
+        
+        let plainText = "foo".data(using: String.Encoding.utf8)!
+        establishSessionFromAliceToBob()
         
         // EXPECT
         let token = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
