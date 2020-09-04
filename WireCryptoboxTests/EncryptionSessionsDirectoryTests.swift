@@ -562,7 +562,7 @@ extension EncryptionSessionsDirectoryTests {
 // MARK: - Extended logging
 extension EncryptionSessionsDirectoryTests {
     
-    func testThatItLogsEncryptionWhenExtendedEncryptionIsSet() {
+    func testThatItLogsEncryptionWhenExtendedLoggingIsSet() {
         
         // GIVEN
         statusAlice.setExtendedLogging(identifier: Person.Bob.identifier, enabled: true)
@@ -592,7 +592,7 @@ extension EncryptionSessionsDirectoryTests {
         ZMSLog.removeLogHook(token: token)
     }
     
-    func testThatItDoesNotLogEncryptionWhenExtendedEncryptionIsNotSet() {
+    func testThatItDoesNotLogEncryptionWhenExtendedLoggingIsNotSet() {
         
         // GIVEN
         // set logging for a different identifier
@@ -614,7 +614,7 @@ extension EncryptionSessionsDirectoryTests {
         ZMSLog.removeLogHook(token: token)
     }
     
-    func testThatItDoesNotLogEncryptionWhenRemovingExtendedEncryption() {
+    func testThatItDoesNotLogEncryptionWhenRemovingExtendedLogging() {
         
         // GIVEN
         statusAlice.setExtendedLogging(identifier: Person.Bob.identifier, enabled: true)
@@ -637,7 +637,7 @@ extension EncryptionSessionsDirectoryTests {
         ZMSLog.removeLogHook(token: token)
     }
     
-    func testThatItLogsDecryptionWhenExtendedEncryptionIsSet_prekeyMessage() {
+    func testThatItLogsDecryptionWhenExtendedLoggingIsSet_prekeyMessage() {
         
         // GIVEN
         statusBob.setExtendedLogging(identifier: Person.Alice.identifier, enabled: true)
@@ -667,7 +667,7 @@ extension EncryptionSessionsDirectoryTests {
         ZMSLog.removeLogHook(token: token)
     }
     
-    func testThatItLogsDecryptionWhenExtendedEncryptionIsSet_nonPrekeyMessage() {
+    func testThatItLogsDecryptionWhenExtendedLoggingIsSet_nonPrekeyMessage() {
         
         // GIVEN
         
@@ -697,7 +697,7 @@ extension EncryptionSessionsDirectoryTests {
         ZMSLog.removeLogHook(token: token)
     }
     
-    func testThatItDoesNotLogDecryptionWhenExtendedEncryptionIsNotSet() {
+    func testThatItDoesNotLogDecryptionWhenExtendedLoggingIsNotSet() {
         
         // GIVEN
         // set logging for a different identifier

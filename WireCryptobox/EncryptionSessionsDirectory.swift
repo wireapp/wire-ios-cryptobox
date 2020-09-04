@@ -493,7 +493,7 @@ class EncryptionSession {
     let cryptoboxPath : URL
     
     /// Whether to log additional information
-    let extensiveLogging: Bool
+    let isExtensiveLoggingEnabled: Bool
     
     /// Creates a session from a C-level session pointer
     /// - parameter id: id of the client
@@ -509,7 +509,7 @@ class EncryptionSession {
         self.remoteFingerprint = session.remoteFingerprint
         self.hasChanges = requiresSave
         self.cryptoboxPath = cryptoboxPath
-        self.extensiveLogging = extensiveLogging
+        self.isExtensiveLoggingEnabled = extensiveLogging
     }
     
     /// Closes the session in CBox
@@ -594,9 +594,9 @@ extension EncryptionSession {
         }
         
         let resultRequiresLogging = result != CBOX_DUPLICATE_MESSAGE && result != CBOX_SUCCESS
-        if (resultRequiresLogging || self.extensiveLogging) {
+        if (resultRequiresLogging || self.isExtensiveLoggingEnabled) {
             let encodedData = HexDumpUnsafeLoggingData(data: cypher)
-            if (self.extensiveLogging) {
+            if (self.isExtensiveLoggingEnabled) {
                 zmLog.safePublic(
                     "Extensive logging: decrypting cyphertext: session \(id): result \(result): \(encodedData)", level: .public
                 )
@@ -629,7 +629,7 @@ extension EncryptionSession {
         self.hasChanges = true
         let data = Data.moveFromCBoxVector(vectorBacking)!
         
-        if (self.extensiveLogging) {
+        if (self.isExtensiveLoggingEnabled) {
             let encodedData = HexDumpUnsafeLoggingData(data: data)
             zmLog.safePublic("Extensive logging: encrypted to cyphertext: session \(id): \(encodedData)", level: .public)
         }
