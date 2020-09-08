@@ -58,7 +58,7 @@ public final class EncryptionSessionsDirectory : NSObject {
     var debug_disableContextValidityCheck = false
     
     /// Set of session identifier that require full debugging logs
-    var extensiveLoggingSessions: Set<EncryptionSessionIdentifier>
+    let extensiveLoggingSessions: Set<EncryptionSessionIdentifier>
     
     /// Context that created this status
     fileprivate weak var generatingContext: EncryptionContext!
