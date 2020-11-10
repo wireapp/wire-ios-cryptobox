@@ -557,11 +557,11 @@ extension EncryptionSession {
         let encodedData = HexDumpUnsafeLoggingData(data: data)
         let sessionContent = (try? Data(contentsOf: sessionURL))
             .map { HexDumpUnsafeLoggingData(data: $0) }
-//        zmLog.safePublic(
-//            SanitizedString("Extensive logging (session \(sessionId)): ") +
-//            SanitizedString("\(reason): cyphertext: \(encodedData); ") +
-//            SanitizedString("session content: \(sessionContent)"),
-//            level: .public)
+        zmLog.safePublic(
+            SanitizedString("Extensive logging (session \(sessionId)): ") +
+            SanitizedString("\(reason): cyphertext: \(encodedData); ") +
+            SanitizedString("session content: \(sessionContent)"),
+            level: .public)
     }
 }
 
