@@ -243,6 +243,7 @@
 		87B43C5820F4AAA00031DE41 /* GenericHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHash.swift; sourceTree = "<group>"; };
 		A96E0113265FFA800034A057 /* WireUtilities.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireUtilities.xcframework; path = Carthage/Build/WireUtilities.xcframework; sourceTree = "<group>"; };
 		A96E0114265FFA800034A057 /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
+		A9E6BE7D269749B500E410ED /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = ios.xcconfig; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios.xcconfig"; sourceTree = SOURCE_ROOT; };
 		BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AEADEncryption.swift; sourceTree = "<group>"; };
@@ -254,7 +255,6 @@
 		F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
 		F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		F1E148D3207D06EF00F81833 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
-		F1E148D4207D06EF00F81833 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
 		F50303291B8CFA2C0053E406 /* libcryptobox.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcryptobox.a; sourceTree = "<group>"; };
 		F503032A1B8CFA2C0053E406 /* libsodium.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsodium.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -345,9 +345,9 @@
 		54B5E1DE1F0A482B001F43A6 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
+				A9E6BE7D269749B500E410ED /* ios.xcconfig */,
 				F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */,
 				F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */,
-				F1E148D4207D06EF00F81833 /* ios.xcconfig */,
 				F1E148D3207D06EF00F81833 /* tests.xcconfig */,
 				54B5E1E01F0A482B001F43A6 /* project-common.xcconfig */,
 				54B5E1E11F0A482B001F43A6 /* project-debug.xcconfig */,
@@ -872,7 +872,10 @@
 			baseConfigurationReference = F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "test-host/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.marco83.test-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;
@@ -884,7 +887,10 @@
 			baseConfigurationReference = F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "test-host/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.marco83.test-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;
