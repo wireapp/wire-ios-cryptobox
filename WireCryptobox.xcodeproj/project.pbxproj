@@ -23,7 +23,6 @@
 		5471A6641D24215B0092A9A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5471A6631D24215B0092A9A9 /* Assets.xcassets */; };
 		5471A6671D24215B0092A9A9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5471A6651D24215B0092A9A9 /* LaunchScreen.storyboard */; };
 		5471A66E1D24221A0092A9A9 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* WireCryptobox.framework */; };
-		5471A66F1D24221A0092A9A9 /* WireCryptobox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* WireCryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5471A6741D242D740092A9A9 /* PointerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6731D242D740092A9A9 /* PointerWrapper.swift */; };
 		5471A6781D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6771D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift */; };
 		54A1573F1D23C00500EB3B4F /* EncryptionContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A1573E1D23C00500EB3B4F /* EncryptionContextTests.swift */; };
@@ -129,17 +128,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5471A6721D24221B0092A9A9 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				5471A66F1D24221A0092A9A9 /* WireCryptobox.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -634,7 +622,6 @@
 				5471A6511D24215B0092A9A9 /* Sources */,
 				5471A6521D24215B0092A9A9 /* Frameworks */,
 				5471A6531D24215B0092A9A9 /* Resources */,
-				5471A6721D24221B0092A9A9 /* Embed Frameworks */,
 				54060B7E1DB7760C00AEA9BB /* CopyFiles */,
 			);
 			buildRules = (
@@ -766,7 +753,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p Carthage/Build/iOS\n";
+			shellScript = "mkdir -p Carthage/Build\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
