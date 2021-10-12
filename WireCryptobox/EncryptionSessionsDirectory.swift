@@ -722,19 +722,12 @@ public struct EncryptionSessionIdentifier : Hashable, Equatable {
         return "\(domain)_\(userId)_\(clientId))"
     }
     
-    public init(domain: String, userId: String, clientId: String) {
+    public init(domain: String? = nil, userId: String, clientId: String) {
         self.userId = userId
         self.clientId = clientId
-        self.domain = domain
+        self.domain = domain ?? ""
     }
 
-    /// Use when migrating from old session identifier to new session identifier
-    public init(fromLegacyV2Identifier userId: String, clientId: String) {
-        self.userId = userId
-        self.clientId = clientId
-        self.domain = String()
-    }
-    
     /// Use when migrating from old session identifier to new session identifier
     init(fromLegacyV1Identifier clientId: String) {
         self.userId = String()
