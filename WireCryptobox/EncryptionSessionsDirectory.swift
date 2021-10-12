@@ -729,7 +729,7 @@ public struct EncryptionSessionIdentifier : Hashable, Equatable {
     }
 
     /// Use when migrating from old session identifier to new session identifier
-    init(fromLegacyV2Identifier userId: String, clientId: String) {
+    public init(fromLegacyV2Identifier userId: String, clientId: String) {
         self.userId = userId
         self.clientId = clientId
         self.domain = String()
