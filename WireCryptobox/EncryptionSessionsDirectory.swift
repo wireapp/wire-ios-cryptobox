@@ -716,10 +716,10 @@ public struct EncryptionSessionIdentifier : Hashable, Equatable {
             return clientId
         }
         guard !domain.isEmpty else {
-            return "\(userId)_\(clientId))"
+            return "\(userId)_\(clientId)"
         }
 
-        return "\(domain)_\(userId)_\(clientId))"
+        return "\(domain)_\(userId)_\(clientId)"
     }
     
     public init(domain: String? = nil, userId: String, clientId: String) {
@@ -750,6 +750,6 @@ public func ==(lhs: EncryptionSessionIdentifier, rhs: EncryptionSessionIdentifie
 
 extension EncryptionSessionIdentifier: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        return "<\(userId.readableHash)>_<\(clientId.readableHash)>"
+        return "<\(domain.readableHash)>_<\(userId.readableHash)>_<\(clientId.readableHash)>"
     }
 }
