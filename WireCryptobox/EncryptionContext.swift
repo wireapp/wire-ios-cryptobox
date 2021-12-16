@@ -61,7 +61,7 @@ class _CBox : PointerWrapper {}
 public final class EncryptionContext : NSObject {
     
     /// What to do with modified sessions
-    public enum ModifiedSessionsBehaviour {
+    public enum ModifiedSessionsBehaviour: Int {
         case save
         case discard
     }
@@ -88,11 +88,10 @@ public final class EncryptionContext : NSObject {
     
     // The maximum size of the end-to-end encrypted payload is defined by ZMClientMessageByteSizeExternalThreshold
     // It's currently 128KB of data. NOTE that this cache is shared between all sessions in an encryption context.
-    fileprivate let cache = Cache<GenericHash, Data>(maxCost: 10_000_000, maxElementsCount: 100000)
-
+    fileprivate let cache: [GenericHash: Data] = [:]
     /// Opens cryptobox from a given folder
     /// - throws: CryptoBox error in case of lower-level error
-    public init(path: URL) {
+    @objc public init(path: URL) {
         let result = cbox_file_open((path.path as NSString).utf8String, &self.implementation.ptr)
         self.path = path
         super.init()
@@ -129,7 +128,7 @@ extension EncryptionContext {
     /// stops using sessions. Nested calls to this method on the same objects on the same
     /// thread are allowed.
     /// - warning: this method is not thread safe
-    public func perform(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) -> () ) {
+    @objc public func perform(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) -> () ) {
         self.acquireDirectoryLock()
         if self.currentSessionsDirectory == nil {
             self.currentSessionsDirectory =
@@ -169,7 +168,7 @@ extension EncryptionContext {
     /// a specific session.
     /// note: if the session is already cached in memory, this will apply from the
     /// next time the session is reloaded
-    public func setExtendedLogging(identifier: EncryptionSessionIdentifier, enabled: Bool) {
+    @objc public func setExtendedLogging(identifier: EncryptionSessionIdentifier, enabled: Bool) {
         if (enabled) {
             self.extensiveLoggingSessions.insert(identifier)
         } else {
@@ -178,7 +177,7 @@ extension EncryptionContext {
     }
     
     /// Disable extensive logging on all sessions
-    public func disableExtendedLoggingOnAllSessions() {
+    @objc public func disableExtendedLoggingOnAllSessions() {
         self.extensiveLoggingSessions.removeAll()
     }
 

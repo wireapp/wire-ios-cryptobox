@@ -20,7 +20,7 @@ import Foundation
 
 /// Encapsulates the hash value.
 
-public struct GenericHash: Hashable {
+public class GenericHash: NSObject {
     private let value: Int
 
     init(value: Int) {
@@ -28,8 +28,8 @@ public struct GenericHash: Hashable {
     }
 }
 
-extension GenericHash: CustomStringConvertible {
-    public var description: String {
+extension GenericHash {
+    public override var description: String {
         return "GenericHash \(hashValue)"
     }
 }

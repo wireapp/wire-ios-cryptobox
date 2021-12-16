@@ -64,9 +64,9 @@ public final class EncryptionSessionsDirectory : NSObject {
     fileprivate weak var generatingContext: EncryptionContext!
     
     /// Local fingerprint
-    public var localFingerprint : Data
+    @objc public var localFingerprint : Data
     
-    fileprivate let encryptionPayloadCache: Cache<GenericHash, Data>
+    fileprivate var encryptionPayloadCache: [GenericHash: Data]
     
     /// Cache of transient sessions, indexed by client ID.
     /// Transient sessions are session that are (potentially) modified in memory
@@ -82,9 +82,9 @@ public final class EncryptionSessionsDirectory : NSObject {
     /// load once and save once at the end.
     fileprivate var pendingSessionsCache : [EncryptionSessionIdentifier : EncryptionSession] = [:]
     
-    init(
+    @objc init(
         generatingContext: EncryptionContext,
-        encryptionPayloadCache: Cache<GenericHash, Data>,
+        encryptionPayloadCache: [GenericHash: Data],
         extensiveLoggingSessions: Set<EncryptionSessionIdentifier>
     ) {
         self.generatingContext = generatingContext
@@ -127,30 +127,25 @@ public final class EncryptionSessionsDirectory : NSObject {
     /// Encrypts data for a client. Caches the encrypted payload based on `hash(data + recepient)` as the cache key.
     /// It invokes @c encrypt() in case of the cache miss.
     /// - throws: EncryptionSessionError in case no session with given recipient
-    public func encryptCaching(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
+    @objc public func encryptCaching(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
         let key = hash(for: plainText, recipient: recipientIdentifier)
         
-        if let cachedObject = encryptionPayloadCache.value(for: key) {
+        if let cachedObject = encryptionPayloadCache[key] {
             zmLog.safePublic("Encrypting, cache hit")
             return cachedObject
         }
         else {
             zmLog.debug("Encrypting, cache miss")
             let data = try encrypt(plainText, for: recipientIdentifier)
-            let didPurgeData = encryptionPayloadCache.set(value: data, for: key, cost: data.count)
-            
-            if didPurgeData {
-                zmLog.safePublic("Encrypting, cache limit reached")
-            }
-            
+            encryptionPayloadCache[key] = data
             return data
         }
     }
     
     /// Purges the cache of encrypted payloads created as the result of @c encryptCaching() call
-    public func purgeEncryptedPayloadCache() {
+    @objc public func purgeEncryptedPayloadCache() {
         zmLog.safePublic("Encryption cache purged")
-        encryptionPayloadCache.purge()
+        encryptionPayloadCache.removeAll()
     }
 }
 
@@ -705,7 +700,7 @@ extension EncryptionSessionsDirectory {
 }
 
 // MARK: - Session identifier
-public struct EncryptionSessionIdentifier : Hashable, Equatable {
+@objc public class EncryptionSessionIdentifier: NSObject {
     
     private let userId: String
     private let clientId: String
@@ -735,12 +730,8 @@ public struct EncryptionSessionIdentifier : Hashable, Equatable {
         self.domain = String()
     }
     
-    public var hashValue: Int {
+    public override var hash: Int {
         return self.rawValue.hashValue
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(hashValue)
     }
 }
 
