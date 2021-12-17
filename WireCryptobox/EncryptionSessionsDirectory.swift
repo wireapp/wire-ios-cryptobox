@@ -190,7 +190,7 @@ public final class EncryptionSessionsDirectory: NSObject, EncryptionSessionManag
         else {
             zmLog.debug("Encrypting, cache miss")
             let data = try encrypt(plainText, for: recipientIdentifier)
-            encryptionPayloadCache[key] = datvea
+            encryptionPayloadCache[key] = data
             return data
         }
     }
