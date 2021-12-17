@@ -695,7 +695,7 @@ extension EncryptionSessionsDirectory {
     private let clientId: String
     private let domain: String
     
-    public var rawValue: String {
+    @objc public var rawValue: String {
         guard !userId.isEmpty else {
             return clientId
         }
@@ -706,7 +706,7 @@ extension EncryptionSessionsDirectory {
         return "\(domain)_\(userId)_\(clientId)"
     }
     
-    public init(domain: String? = nil, userId: String, clientId: String) {
+    @objc public init(domain: String? = nil, userId: String, clientId: String) {
         self.userId = userId
         self.clientId = clientId
         self.domain = domain ?? ""
