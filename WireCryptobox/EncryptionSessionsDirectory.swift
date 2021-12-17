@@ -21,6 +21,59 @@ import Foundation
 import WireSystem
 import WireUtilities
 
+// MARK: - Encryption
+public protocol Encryptor: class {
+    /// Encrypts data for a client
+    /// It immediately saves the session
+    /// - throws: EncryptionSessionError in case no session with given recipient
+    func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data
+}
+
+// MARK: - Decryption
+public protocol Decryptor: class {
+    /// Decrypts data from a client
+    /// The session is not saved to disk until the cache is committed
+    /// - throws: EncryptionSessionError in case no session with given recipient
+    func decrypt(_ cypherText: Data, from senderIdentifier: EncryptionSessionIdentifier) throws -> Data
+}
+
+public protocol PrekeyGeneratorType {
+    func generatePrekey(_ id: UInt16) throws -> String
+    func generateLastPrekey() throws -> String
+    func generatePrekeys(_ range: CountableRange<UInt16>) throws -> [(id: UInt16, prekey: String)]
+    func generatePrekeys(_ nsRange: NSRange) throws -> [[String : AnyObject]]
+}
+
+// MARK: - Encryption sessions
+public protocol EncryptionSessionManager {
+    /// Migrate session to a new identifier, if a session with the old identifier exists
+    /// and a session with the new identifier does not exist
+    func migrateSession(from previousIdentifier: String, to newIdentifier: EncryptionSessionIdentifier)
+
+    /// Creates a session to a client using a prekey of that client
+    /// The session is not saved to disk until the cache is committed
+    /// - throws: CryptoBox error in case of lower-level error
+    func createClientSession(_ identifier: EncryptionSessionIdentifier, base64PreKeyString: String) throws
+
+    /// Creates a session to a client using a prekey message from that client
+    /// The session is not saved to disk until the cache is committed
+    /// - returns: the plaintext
+    /// - throws: CryptoBox error in case of lower-level error
+    func createClientSessionAndReturnPlaintext(for identifier: EncryptionSessionIdentifier, prekeyMessage: Data) throws -> Data
+
+    /// Deletes a session with a client
+    func delete(_ identifier: EncryptionSessionIdentifier)
+
+    /// Returns true if there is an existing session for this client ID
+    func hasSession(for identifier: EncryptionSessionIdentifier) -> Bool
+
+    /// Closes all transient sessions without saving them
+    func discardCache()
+
+    /// Returns the remote fingerprint of a encryption session
+    func fingerprint(for identifier: EncryptionSessionIdentifier) -> Data?
+}
+
 @objc enum EncryptionSessionError : Int {
     
     case unknown, encryptionFailed, decryptionFailed
@@ -51,7 +104,7 @@ class _CBoxSession : PointerWrapper {}
 /// An encryption state that is usable to encrypt/decrypt messages
 /// It maintains an in-memory cache of encryption sessions with other clients
 /// that is persisted to disk as soon as it is deallocated.
-public final class EncryptionSessionsDirectory : NSObject {
+public final class EncryptionSessionsDirectory: NSObject, EncryptionSessionManager, PrekeyGeneratorType, Encryptor, Decryptor {
     
     /// Used for testing only. If set to true,
     /// will not try to validate with the generating context
@@ -147,41 +200,8 @@ public final class EncryptionSessionsDirectory : NSObject {
         zmLog.safePublic("Encryption cache purged")
         encryptionPayloadCache.removeAll()
     }
-}
-
-// MARK: - Encryption sessions
-public protocol EncryptionSessionManager {
-    /// Migrate session to a new identifier, if a session with the old identifier exists
-    /// and a session with the new identifier does not exist
-    func migrateSession(from previousIdentifier: String, to newIdentifier: EncryptionSessionIdentifier)
     
-    /// Creates a session to a client using a prekey of that client
-    /// The session is not saved to disk until the cache is committed
-    /// - throws: CryptoBox error in case of lower-level error
-    func createClientSession(_ identifier: EncryptionSessionIdentifier, base64PreKeyString: String) throws
-    
-    /// Creates a session to a client using a prekey message from that client
-    /// The session is not saved to disk until the cache is committed
-    /// - returns: the plaintext
-    /// - throws: CryptoBox error in case of lower-level error
-    func createClientSessionAndReturnPlaintext(for identifier: EncryptionSessionIdentifier, prekeyMessage: Data) throws -> Data
-    
-    /// Deletes a session with a client
-    func delete(_ identifier: EncryptionSessionIdentifier)
-    
-    /// Returns true if there is an existing session for this client ID
-    func hasSession(for identifier: EncryptionSessionIdentifier) -> Bool
-    
-    /// Closes all transient sessions without saving them
-    func discardCache()
-    
-    /// Returns the remote fingerprint of a encryption session
-    func fingerprint(for identifier: EncryptionSessionIdentifier) -> Data?
-}
-
-extension EncryptionSessionsDirectory: EncryptionSessionManager {
-    
-    public func migrateSession(from previousIdentifier: String, to newIdentifier: EncryptionSessionIdentifier) {
+    @objc public func migrateSession(from previousIdentifier: String, to newIdentifier: EncryptionSessionIdentifier) {
         
         let previousSessionIdentifier = EncryptionSessionIdentifier(fromLegacyV1Identifier: previousIdentifier)
         // this scopes guarantee that `old` is released
@@ -215,7 +235,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         
     }
     
-    public func createClientSession(_ identifier: EncryptionSessionIdentifier, base64PreKeyString: String) throws {
+    @objc public func createClientSession(_ identifier: EncryptionSessionIdentifier, base64PreKeyString: String) throws {
         
         // validate
         guard let prekeyData = Data(base64Encoded: base64PreKeyString, options: []) else {
@@ -251,7 +271,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         zmLog.safePublic("Created session for client \(identifier) - fingerprint \(session.remoteFingerprint)")
     }
     
-    public func createClientSessionAndReturnPlaintext(for identifier: EncryptionSessionIdentifier, prekeyMessage: Data) throws -> Data {
+    @objc public func createClientSessionAndReturnPlaintext(for identifier: EncryptionSessionIdentifier, prekeyMessage: Data) throws -> Data {
         let context = self.validateContext()
         let cbsession = _CBoxSession()
         var plainTextBacking : OpaquePointer? = nil
@@ -289,7 +309,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         return plainText
     }
     
-    public func delete(_ identifier: EncryptionSessionIdentifier) {
+    @objc public func delete(_ identifier: EncryptionSessionIdentifier) {
         let context = self.validateContext()
         self.discardFromCache(identifier)
         let result = cbox_session_delete(context.implementation.ptr, identifier.rawValue)
@@ -363,28 +383,17 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         discardFromCache(identifier)
     }
     
-    public func fingerprint(for identifier: EncryptionSessionIdentifier) -> Data? {
+    @objc public func fingerprint(for identifier: EncryptionSessionIdentifier) -> Data? {
         guard let session = self.clientSession(for: identifier) else {
             return nil
         }
         return session.remoteFingerprint
     }
-}
-
-public protocol PrekeyGeneratorType {
-    func generatePrekey(_ id: UInt16) throws -> String
-    func generateLastPrekey() throws -> String
-    func generatePrekeys(_ range: CountableRange<UInt16>) throws -> [(id: UInt16, prekey: String)]
-    func generatePrekeys(_ nsRange: NSRange) throws -> [[String : AnyObject]]
-}
-
-// MARK: - Prekeys
-extension EncryptionSessionsDirectory: PrekeyGeneratorType {
     
     /// Generates one prekey of the given ID. If the prekey exists already,
     /// it will replace that prekey
     /// - returns: base 64 encoded string
-    public func generatePrekey(_ id: UInt16) throws -> String {
+    @objc public func generatePrekey(_ id: UInt16) throws -> String {
         guard id <= CBOX_LAST_PREKEY_ID else {
             // this should never happen, as CBOX_LAST_PREKEY_ID is UInt16.max
             fatal("Prekey out of bound \(id)")
@@ -402,7 +411,7 @@ extension EncryptionSessionsDirectory: PrekeyGeneratorType {
     
     /// Generates the last prekey. If the prekey exists already,
     /// it will replace that prekey
-    public func generateLastPrekey() throws -> String {
+    @objc public func generateLastPrekey() throws -> String {
         return try generatePrekey(CBOX_LAST_PREKEY_ID)
     }
     
@@ -439,6 +448,26 @@ extension EncryptionSessionsDirectory: PrekeyGeneratorType {
             
             return Data.moveFromCBoxVector(vectorBacking)!
         })
+    }
+
+    public func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
+        _ = self.validateContext()
+        guard let session = self.clientSession(for: recipientIdentifier) else {
+            zmLog.safePublic("Can't find session to encrypt for client \(recipientIdentifier)")
+            throw EncryptionSessionError.encryptionFailed.error
+        }
+        let cypherText = try session.encrypt(plainText)
+        self.saveSession(recipientIdentifier)
+        return cypherText
+    }
+
+    public func decrypt(_ cypherText: Data, from senderIdentifier: EncryptionSessionIdentifier) throws -> Data {
+        _ = self.validateContext()
+        guard let session = self.clientSession(for: senderIdentifier) else {
+            zmLog.safePublic("Can't find session to decrypt for client \(senderIdentifier)")
+            throw EncryptionSessionError.decryptionFailed.error
+        }
+        return try session.decrypt(cypherText)
     }
 }
 
@@ -559,46 +588,6 @@ extension EncryptionSession {
             level: .public)
     }
 }
-
-// MARK: - Encryption
-public protocol Encryptor: class {
-    /// Encrypts data for a client
-    /// It immediately saves the session
-    /// - throws: EncryptionSessionError in case no session with given recipient
-    func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data
-}
-
-// MARK: - Decryption
-public protocol Decryptor: class {
-    /// Decrypts data from a client
-    /// The session is not saved to disk until the cache is committed
-    /// - throws: EncryptionSessionError in case no session with given recipient
-    func decrypt(_ cypherText: Data, from senderIdentifier: EncryptionSessionIdentifier) throws -> Data
-}
-
-extension EncryptionSessionsDirectory: Encryptor, Decryptor {
-
-    public func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
-        _ = self.validateContext()
-        guard let session = self.clientSession(for: recipientIdentifier) else {
-            zmLog.safePublic("Can't find session to encrypt for client \(recipientIdentifier)")
-            throw EncryptionSessionError.encryptionFailed.error
-        }
-        let cypherText = try session.encrypt(plainText)
-        self.saveSession(recipientIdentifier)
-        return cypherText
-    }
-    
-    public func decrypt(_ cypherText: Data, from senderIdentifier: EncryptionSessionIdentifier) throws -> Data {
-        _ = self.validateContext()
-        guard let session = self.clientSession(for: senderIdentifier) else {
-            zmLog.safePublic("Can't find session to decrypt for client \(senderIdentifier)")
-            throw EncryptionSessionError.decryptionFailed.error
-        }
-        return try session.decrypt(cypherText)
-    }
-}
-
 
 extension EncryptionSession {
     
