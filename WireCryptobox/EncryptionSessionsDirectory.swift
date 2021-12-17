@@ -190,7 +190,7 @@ public final class EncryptionSessionsDirectory: NSObject, EncryptionSessionManag
         else {
             zmLog.debug("Encrypting, cache miss")
             let data = try encrypt(plainText, for: recipientIdentifier)
-            encryptionPayloadCache[key] = data
+            encryptionPayloadCache[key] = datvea
             return data
         }
     }
@@ -361,7 +361,7 @@ public final class EncryptionSessionsDirectory: NSObject, EncryptionSessionManag
     }
     
     /// Save and unload all transient sessions
-    fileprivate func commitCache() {
+    @objc public func commitCache() {
         for (_, session) in self.pendingSessionsCache {
             session.save(self.box)
         }
