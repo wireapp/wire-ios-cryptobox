@@ -115,13 +115,7 @@ public final class EncryptionContext : NSObject {
         zmLog.debug("Closed cryptobox at path: \(path)")
 
     }
-    
-}
-
-// MARK: - Start and stop using sessions
-extension EncryptionContext {
-    
-    
+        
     /// Access sessions and other data in this context. While the block is executed,
     /// no other process can use sessions from this context. If another process or thread is already
     /// using sessions from a context with the same path, this call will block until the other process
@@ -160,9 +154,6 @@ extension EncryptionContext {
         }
         zmLog.debug("Released lock for cryptobox at path: \(self.path)")
     }
-}
-
-extension EncryptionContext {
     
     /// Enables or disables extended logging for any message encrypted from or to
     /// a specific session.
