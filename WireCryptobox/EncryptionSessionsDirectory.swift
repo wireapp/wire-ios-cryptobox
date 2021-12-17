@@ -351,7 +351,7 @@ public final class EncryptionSessionsDirectory: NSObject, EncryptionSessionManag
         }
     }
     
-    public func hasSession(for identifier: EncryptionSessionIdentifier) -> Bool {
+    @objc public func hasSession(for identifier: EncryptionSessionIdentifier) -> Bool {
         return (clientSession(for: identifier) != nil)
     }
     
@@ -450,7 +450,7 @@ public final class EncryptionSessionsDirectory: NSObject, EncryptionSessionManag
         })
     }
 
-    public func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
+    @objc public func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
         _ = self.validateContext()
         guard let session = self.clientSession(for: recipientIdentifier) else {
             zmLog.safePublic("Can't find session to encrypt for client \(recipientIdentifier)")
@@ -461,7 +461,7 @@ public final class EncryptionSessionsDirectory: NSObject, EncryptionSessionManag
         return cypherText
     }
 
-    public func decrypt(_ cypherText: Data, from senderIdentifier: EncryptionSessionIdentifier) throws -> Data {
+    @objc public func decrypt(_ cypherText: Data, from senderIdentifier: EncryptionSessionIdentifier) throws -> Data {
         _ = self.validateContext()
         guard let session = self.clientSession(for: senderIdentifier) else {
             zmLog.safePublic("Can't find session to decrypt for client \(senderIdentifier)")
