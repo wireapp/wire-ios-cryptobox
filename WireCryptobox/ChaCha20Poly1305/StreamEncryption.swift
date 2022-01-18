@@ -362,8 +362,10 @@ public extension ChaCha20Poly1305 {
                 var messageLength: UInt64 = 0
                 let cipherLength: UInt64 = UInt64(bytesRead)
 
-                guard crypto_secretstream_xchacha20poly1305_pull(&state, &messageBuffer, &messageLength, &tag, cipherBuffer, cipherLength, nil, 0) == 0 else {
-                    throw EncryptionError.decryptionFailed
+                ///TODO: ret = -1, check sodium version
+                let ret = crypto_secretstream_xchacha20poly1305_pull(&state, &messageBuffer, &messageLength, &tag, cipherBuffer, cipherLength, nil, 0)
+                guard ret == 0 else {
+                    throw EncryptionError.decryptionFailed ///TODO: here throws
                 }
 
                 bytesWritten = output.write(messageBuffer, maxLength: Int(messageLength))
