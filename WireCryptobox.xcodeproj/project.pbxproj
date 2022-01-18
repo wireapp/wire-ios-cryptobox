@@ -902,7 +902,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1E21F0A482B001F43A6 /* project.xcconfig */;
 			buildSettings = {
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 			};
 			name = Release;
 		};
