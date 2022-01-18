@@ -169,6 +169,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
         let encryptedMessage =  Data(base64Encoded: "V0JVSQAAAT5xxW76YX91IgLvJwXeC5x+q/8To15mBzbsA6rc5Dzf7xRyWH+LYv+bscKxj3c7Fl7trr/9qt78lgA5ZtyjK7d2ZBdSYl4HLskPjyUIseTjAZjGKt+7MEXp8aVBey8ooGep")!
         
         // when
+        ///TODO: Bill on M1 mac this test failed for caught error: "decryptionFailed"
         let decryptedMessage = try decrypt(encryptedMessage, passphrase: passphrase)
         
         // then
