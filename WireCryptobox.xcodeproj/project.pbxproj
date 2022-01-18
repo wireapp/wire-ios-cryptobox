@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0928E2601BA0785F0057232E /* libcryptobox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F50303291B8CFA2C0053E406 /* libcryptobox.a */; };
-		0928E2611BA0785F0057232E /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F503032A1B8CFA2C0053E406 /* libsodium.a */; };
 		0928E36D1BA0908F0057232E /* WireCryptobox.h in Headers */ = {isa = PBXBuildFile; fileRef = 0928E36C1BA0908F0057232E /* WireCryptobox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09E393C31BAC2E5600F3EA1B /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* WireCryptobox.framework */; };
 		16460B7F206D456F0096B616 /* cbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 16460B7E206D456F0096B616 /* cbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -95,6 +93,7 @@
 		87B43C5920F4AAA00031DE41 /* GenericHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B43C5820F4AAA00031DE41 /* GenericHash.swift */; };
 		A96E0115265FFA800034A057 /* WireUtilities.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A96E0113265FFA800034A057 /* WireUtilities.xcframework */; };
 		A96E0117265FFA800034A057 /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A96E0114265FFA800034A057 /* WireSystem.xcframework */; };
+		A9C97AE427972CF000C3B9D3 /* libcryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9C97AE327972CF000C3B9D3 /* libcryptobox.xcframework */; };
 		EEA2B85D24DAD1E700C6659E /* AEADEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */; };
 		EEA2B85F24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */; };
 		EEA2B86124DC3F1600C6659E /* Byte.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B86024DC3F1600C6659E /* Byte.swift */; };
@@ -231,6 +230,7 @@
 		87B43C5820F4AAA00031DE41 /* GenericHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHash.swift; sourceTree = "<group>"; };
 		A96E0113265FFA800034A057 /* WireUtilities.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireUtilities.xcframework; path = Carthage/Build/WireUtilities.xcframework; sourceTree = "<group>"; };
 		A96E0114265FFA800034A057 /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
+		A9C97AE327972CF000C3B9D3 /* libcryptobox.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libcryptobox.xcframework; path = Carthage/Build/libcryptobox.xcframework; sourceTree = "<group>"; };
 		A9E6BE7D269749B500E410ED /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = ios.xcconfig; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios.xcconfig"; sourceTree = SOURCE_ROOT; };
 		BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -252,9 +252,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0928E2601BA0785F0057232E /* libcryptobox.a in Frameworks */,
+				A9C97AE427972CF000C3B9D3 /* libcryptobox.xcframework in Frameworks */,
 				A96E0117265FFA800034A057 /* WireSystem.xcframework in Frameworks */,
-				0928E2611BA0785F0057232E /* libsodium.a in Frameworks */,
 				A96E0115265FFA800034A057 /* WireUtilities.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -505,6 +504,7 @@
 		F10C8E221E9296BA00020408 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A9C97AE327972CF000C3B9D3 /* libcryptobox.xcframework */,
 				A96E0114265FFA800034A057 /* WireSystem.xcframework */,
 				A96E0113265FFA800034A057 /* WireUtilities.xcframework */,
 			);
@@ -895,6 +895,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1E11F0A482B001F43A6 /* project-debug.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 			};
 			name = Debug;
 		};
@@ -902,6 +903,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1E21F0A482B001F43A6 /* project.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 			};
 			name = Release;
 		};
