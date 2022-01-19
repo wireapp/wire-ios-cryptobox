@@ -243,8 +243,6 @@
 		F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
 		F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		F1E148D3207D06EF00F81833 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
-		F50303291B8CFA2C0053E406 /* libcryptobox.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcryptobox.a; sourceTree = "<group>"; };
-		F503032A1B8CFA2C0053E406 /* libsodium.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsodium.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -418,7 +416,6 @@
 				EFF7A46E2271DBB100F1AC33 /* Cartfile.resolved */,
 				BA7EF9601B7109B600204A8E /* WireCryptobox */,
 				0928E35A1BA090620057232E /* Resources */,
-				BA7EF9781B710B4D00204A8E /* Libraries */,
 				BA7EF96D1B7109B600204A8E /* CryptoboxTests */,
 				5471A6561D24215B0092A9A9 /* test-host */,
 				BA7EF95F1B7109B600204A8E /* Products */,
@@ -482,14 +479,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		BA7EF9781B710B4D00204A8E /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-				F50303281B8CFA2C0053E406 /* lib */,
-			);
-			name = Libraries;
-			sourceTree = "<group>";
-		};
 		EEF6714424E682EA00BDB9B9 /* ChaCha20Poly1305 */ = {
 			isa = PBXGroup;
 			children = (
@@ -509,16 +498,6 @@
 				A96E0113265FFA800034A057 /* WireUtilities.xcframework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		F50303281B8CFA2C0053E406 /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				F50303291B8CFA2C0053E406 /* libcryptobox.a */,
-				F503032A1B8CFA2C0053E406 /* libsodium.a */,
-			);
-			name = lib;
-			path = build/lib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
