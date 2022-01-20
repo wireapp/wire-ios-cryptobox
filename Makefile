@@ -1,10 +1,7 @@
 SHELL   := /usr/bin/env bash
 VERSION := 0.3.0
 
-TARGETS := armv7-apple-ios \
-           armv7s-apple-ios \
-           i386-apple-ios \
-           aarch64-apple-ios \
+TARGETS := aarch64-apple-ios \
            x86_64-apple-ios
 
 # pkg-config is invoked by libsodium-sys
