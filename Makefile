@@ -1,5 +1,5 @@
 SHELL   := /usr/bin/env bash
-VERSION := 0.3.0
+VERSION := 1.1.3
 
 TARGETS := aarch64-apple-ios \
            x86_64-apple-ios
