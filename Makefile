@@ -53,6 +53,9 @@ cryptobox: build/lib/libcryptobox.a build/include/cbox.h
 cryptobox-%:
 	mkdir -p build
 	cd build
+	git clone https://github.com/wireapp/cryptobox-ios --branch v$*
+	cp -rf cryptobox-ios/mk/cryptobox-src.mk ./mk
+	cp -rf cryptobox-ios/mk/libsodium-src.mk ./mk
 	if [ ! -f build/cryptobox-ios-$*.tar.gz ]; then \
 	curl -L -o build/cryptobox-ios-$*.tar.gz https://github.com/wireapp/cryptobox-ios/releases/download/v$*/cryptobox-ios-$*.tar.gz; \
 	fi
