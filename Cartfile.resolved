@@ -1,4 +1,4 @@
-github "billypchan/libsodium" "1.0.18-RELEASE"
+github "billypchan/libsodium" "1.0.14"
 github "wireapp/cryptobox-ios" "v1.1.3_xcframework"
 github "wireapp/wire-ios-system" "36.0.0"
 github "wireapp/wire-ios-utilities" "44.0.0"
