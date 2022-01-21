@@ -135,7 +135,7 @@
 		0928E36C1BA0908F0057232E /* WireCryptobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireCryptobox.h; sourceTree = "<group>"; };
 		0928E36E1BA0909D0057232E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0928E3751BA17E300057232E /* WireCryptobox.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireCryptobox.xcconfig; sourceTree = "<group>"; };
-		16460B7E206D456F0096B616 /* cbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cbox.h; sourceTree = "<group>"; };
+		16460B7E206D456F0096B616 /* cbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cbox.h; path = "../Carthage/Build/cryptobox.xcframework/ios-arm64/Headers/cbox.h"; sourceTree = "<group>"; };
 		16460B80206D46CA0096B616 /* StreamEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamEncryption.swift; sourceTree = "<group>"; };
 		16460B82206D47460096B616 /* ChaCha20StreamEncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20StreamEncryptionTests.swift; sourceTree = "<group>"; };
 		54060B7C1DB771B400AEA9BB /* Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logs.swift; sourceTree = "<group>"; };
@@ -579,7 +579,6 @@
 			buildConfigurationList = 0928E24B1BA0777A0057232E /* Build configuration list for PBXNativeTarget "WireCryptobox" */;
 			buildPhases = (
 				5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */,
-				0928E2621BA078750057232E /* copy cbox.h */,
 				0928E22F1BA0777A0057232E /* Sources */,
 				0928E2301BA0777A0057232E /* Frameworks */,
 				0928E2311BA0777A0057232E /* Headers */,
@@ -705,20 +704,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0928E2621BA078750057232E /* copy cbox.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "copy cbox.h";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cp Carthage/Build/cryptobox.xcframework/ios-arm64/Headers/cbox.h WireCryptobox/cbox.h\n";
-		};
 		5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
