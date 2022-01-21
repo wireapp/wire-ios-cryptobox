@@ -579,7 +579,7 @@
 			buildConfigurationList = 0928E24B1BA0777A0057232E /* Build configuration list for PBXNativeTarget "WireCryptobox" */;
 			buildPhases = (
 				5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */,
-				0928E2621BA078750057232E /* Check for dependencies  */,
+				0928E2621BA078750057232E /* copy cbox.h */,
 				0928E22F1BA0777A0057232E /* Sources */,
 				0928E2301BA0777A0057232E /* Frameworks */,
 				0928E2311BA0777A0057232E /* Headers */,
@@ -705,19 +705,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0928E2621BA078750057232E /* Check for dependencies  */ = {
+		0928E2621BA078750057232E /* copy cbox.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check for dependencies ";
+			name = "copy cbox.h";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "DIRECTORY=\"${PROJECT_DIR}/../build\"\nexport PATH=$PATH:/usr/local/bin\nhash curl || exit 1 # if this fires, you don't have wget installed!\nmake cryptobox-\"${CRYPTOBOX_VERSION}\"\ncp build/include/cbox.h WireCryptobox/cbox.h\n";
+			shellScript = "cp Carthage/Build/cryptobox.xcframework/ios-arm64/Headers/cbox.h WireCryptobox/cbox.h\n";
 		};
 		5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */ = {
 			isa = PBXShellScriptBuildPhase;
