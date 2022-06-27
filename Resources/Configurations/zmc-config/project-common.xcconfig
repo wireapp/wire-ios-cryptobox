@@ -19,7 +19,6 @@
 #include "warnings.xcconfig"
 #include "../version.xcconfig"
 #include "ios-arm64Simulator.xcconfig"
-#include "ios-common.xcconfig"
 
 
 // info.plist

@@ -235,6 +235,7 @@
 		A9F499E7279AC5EC00969F4B /* ios-arm64Simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "ios-arm64Simulator.xcconfig"; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios-arm64Simulator.xcconfig"; sourceTree = SOURCE_ROOT; };
 		BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EE18F3602869A01D004012FE /* ios-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-common.xcconfig"; sourceTree = "<group>"; };
 		EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AEADEncryption.swift; sourceTree = "<group>"; };
 		EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20AEADEncryptionTests.swift; sourceTree = "<group>"; };
 		EEA2B86024DC3F1600C6659E /* Byte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Byte.swift; sourceTree = "<group>"; };
@@ -332,6 +333,7 @@
 			children = (
 				A9F499E7279AC5EC00969F4B /* ios-arm64Simulator.xcconfig */,
 				F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */,
+				EE18F3602869A01D004012FE /* ios-common.xcconfig */,
 				F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */,
 				F1E148D3207D06EF00F81833 /* tests.xcconfig */,
 				54B5E1E01F0A482B001F43A6 /* project-common.xcconfig */,
