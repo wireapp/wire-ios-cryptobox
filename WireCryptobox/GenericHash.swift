@@ -74,14 +74,14 @@ public final class GenericHashBuilder {
     
     public func build() -> GenericHash {
         assert(state != .done, "This builder cannot be used any more: hash is already calculated")
-        var hashBytes: Array<UInt8> = Array(repeating: 0, count: GenericHashBuilder.size)
+        var hashBytes: [UInt8] = Array(repeating: 0, count: GenericHashBuilder.size)
         crypto_generichash_final(opaqueCryptoState, &hashBytes, GenericHashBuilder.size)
         state = .done
-        
-        let bigEndianValue = hashBytes.withUnsafeBufferPointer {
-            ($0.baseAddress!.withMemoryRebound(to: Int.self, capacity: 1) { $0 })
-            }.pointee
-        
-        return GenericHash(value: Int(bigEndian: bigEndianValue))
+        let bigEndianUInt = hashBytes.withUnsafeBytes { $0.load(as: Int.self) }
+        let value = CFByteOrderGetCurrent() == CFByteOrder(CFByteOrderLittleEndian.rawValue)
+            ? Int(bigEndian: bigEndianUInt)
+            : bigEndianUInt
+
+        return GenericHash(value: value)
     }
 }
