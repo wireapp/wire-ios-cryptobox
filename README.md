@@ -15,6 +15,8 @@ This framework is part of Wire iOS. Additional documentation is available in the
 
 This project provides for cross-compilation of [cryptobox](https://github.com/wireapp/cryptobox) for iOS, currently only in the form of static libraries.
 
+⚠️ **This repository is now part of [wire-ios-mono](https://github.com/wireapp/wire-ios-mono)**
+
 ## Integrating Objective-C Wrapper
 You can integrate Objective-C Wrapper (Cryptobox.framework) using Carthage.
 When Carthage will build it first time it will also build `libcryptobox.a` and `libsodium.a` in `Carthage/Checkouts/cryptobox-ios/build` with `libs` and `include` subfolders. So you can just add these paths to Libraries Search Paths and Headers Search Paths of your project.
